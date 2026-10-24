@@ -3,87 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proyecto Kami</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    body {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #f8fafc;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 40px;
-      max-width: 550px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    }
-    .badge {
-      display: inline-block;
-      padding: 6px 14px;
-      background: #10b981;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      border-radius: 9999px;
-      margin-bottom: 20px;
-      letter-spacing: 0.5px;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 12px;
-      background: linear-gradient(90deg, #38bdf8, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    p {
-      color: #94a3b8;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
-    .status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.25);
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      color: #cbd5e1;
-    }
-    .indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 10px #22c55e;
-    }
-  </style>
+  <title>Kami - Centro de Juegos</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="card">
-    <div class="badge">Sincronización en vivo</div>
-    <h1>¡Hola, Kamikazesp!</h1>
-    <p>Este es tu proyecto <strong>Kami</strong> alojado en GitHub Pages. Cada cambio que hagamos se actualizará aquí automáticamente.</p>
-    <div class="status">
-      <div class="indicator"></div>
-      <span>Conectado y listo para programar</span>
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="logo">Kami<span>.dev</span></div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="switchTab('inicio')">🏠 Inicio</button>
+      <button class="nav-btn" onclick="switchTab('juegos')">🎮 Juegos</button>
     </div>
-  </div>
+  </nav>
+
+  <!-- Contenedor principal -->
+  <main class="container">
+    <!-- PESTAÑA: INICIO -->
+    <section id="tab-inicio" class="tab-content active">
+      <div class="hero-card">
+        <div class="badge">Sincronización en vivo</div>
+        <h1>¡Bienvenido a Kami!</h1>
+        <p>Tu portal personal y centro de proyectos web. Cada cambio realizado se despliega en tiempo real en GitHub Pages para que puedas probarlo en cualquier dispositivo.</p>
+        
+        <div class="quick-stats">
+          <div class="stat-box">
+            <span class="stat-number" id="game-count">3</span>
+            <span class="stat-label">Juegos listados</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-indicator"></span>
+            <span class="stat-label">GitHub Pages Activo</span>
+          </div>
+        </div>
+
+        <button class="cta-btn" onclick="switchTab('juegos')">Explorar Juegos 🎮</button>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: JUEGOS -->
+    <section id="tab-juegos" class="tab-content">
+      <div class="section-header">
+        <h2>🎮 Zona de Juegos HTML</h2>
+        <p>Juegos desarrollados en HTML5, CSS y JavaScript listos para jugar desde cualquier pantalla.</p>
+      </div>
+
+      <div class="games-grid">
+        <!-- Ejemplo / Placeholder Juego 1 -->
+        <article class="game-card">
+          <div class="game-cover cover-1">🕹️</div>
+          <div class="game-info">
+            <span class="game-tag">Próximamente</span>
+            <h3>Snake Clásico</h3>
+            <p>El clásico juego de la serpiente adaptado para teclado y pantalla táctil móvil.</p>
+            <a href="juegos/snake/" class="play-btn disabled" onclick="return false;">En desarrollo</a>
+          </div>
+        </article>
+
+        <!-- Ejemplo / Placeholder Juego 2 -->
+        <article class="game-card">
+          <div class="game-cover cover-2">🧠</div>
+          <div class="game-info">
+            <span class="game-tag">Próximamente</span>
+            <h3>Memoria & Cartas</h3>
+            <p>Juego de encontrar parejas con contador de tiempo y movimientos.</p>
+            <a href="juegos/memoria/" class="play-btn disabled" onclick="return false;">En desarrollo</a>
+          </div>
+        </article>
+
+        <!-- Card para agregar nuevo juego -->
+        <article class="game-card add-card">
+          <div class="add-icon">➕</div>
+          <div class="game-info">
+            <h3>Tu nuevo juego</h3>
+            <p>Solo dime qué juego quieres crear y lo agregaremos directamente a esta lista.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabId).classList.add('active');
+      const clickedBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.textContent.toLowerCase().includes(tabId));
+      if (clickedBtn) clickedBtn.classList.add('active');
+    }
+  </script>
 </body>
 </html>
