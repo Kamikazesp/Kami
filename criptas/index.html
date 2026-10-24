@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="version" content="20261022113125">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Criptas de Velmor</title>
+<meta name="description" content="Juego de mazmorras por turnos para 1 a 4 jugadores en el navegador. Crea una sala, comparte el código y bajad juntos a las criptas.">
+<meta name="theme-color" content="#1f1611">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,700;1,400&family=Grenze+Gotisch:wght@600;700;900&display=swap">
+<script type="importmap" id="versiones">
+{
+  "imports": {
+    "./js/datos.js": "./js/datos.js?v=20261022113125",
+    "./js/firebase.js": "./js/firebase.js?v=20261022113125",
+    "./js/ia.js": "./js/ia.js?v=20261022113125",
+    "./js/iconos.js": "./js/iconos.js?v=20261022113125",
+    "./js/miniaturas.js": "./js/miniaturas.js?v=20261022113125",
+    "./js/motor.js": "./js/motor.js?v=20261022113125",
+    "./js/muebles3d.js": "./js/muebles3d.js?v=20261022113125",
+    "./js/nube.js": "./js/nube.js?v=20261022113125",
+    "./js/panel.js": "./js/panel.js?v=20261022113125",
+    "./js/procedural.js": "./js/procedural.js?v=20261022113125",
+    "./js/red.js": "./js/red.js?v=20261022113125",
+    "./js/render.js": "./js/render.js?v=20261022113125",
+    "./js/render3d.js": "./js/render3d.js?v=20261022113125",
+    "./js/sprites.js": "./js/sprites.js?v=20261022113125",
+    "./js/tablero.js": "./js/tablero.js?v=20261022113125",
+    "./js/ui.js": "./js/ui.js?v=20261022113125"
+  }
+}
+</script>
+<link rel="stylesheet" href="estilo.css?v=20261022113125">
+</head>
+<body>
+
+<!-- ============ PORTADA ============ -->
+<section id="portada" class="pantalla">
+  <div class="centro">
+    <div class="titulo">
+      <h1>Criptas<small>de Velmor</small></h1>
+      <p>Cuatro héroes, una mazmorra y un nigromante que espera al fondo.</p>
+    </div>
+
+    <div class="pergamino menu">
+      <label class="campo">Tu nombre
+        <input id="nombre" class="nombre" maxlength="20" autocomplete="nickname" placeholder="Aventurero" style="height:48px;border-radius:6px;border:2px solid var(--pergamino-osc);background:#f3e7c9;color:var(--tinta);font:600 18px var(--f-texto);padding:0 12px">
+      </label>
+    </div>
+    <div class="modos">
+      <div class="pergamino modo">
+        <h2>Modo Historia</h2>
+        <p class="nota">La campaña de Velmor: cinco misiones con su guion, de los túneles al trono.</p>
+        <button class="btn" data-modo="historia" data-donde="local">Jugar en este dispositivo</button>
+        <button class="btn madera" data-modo="historia" data-donde="sala">Crear sala con amigos</button>
+      </div>
+      <div class="pergamino modo infinita">
+        <h2>Mazmorra Infinita</h2>
+        <p class="nota">Pisos aleatorios sin fin, cada vez más duros. Subid de nivel, buscad reliquias… y si caéis todos, se acabó.</p>
+        <p class="record" id="record-infinita" hidden></p>
+        <button class="btn" data-modo="infinita" data-donde="local">Jugar en este dispositivo</button>
+        <button class="btn madera" data-modo="infinita" data-donde="sala">Crear sala con amigos</button>
+      </div>
+    </div>
+    <div class="pergamino menu" id="menu-unirse">
+      <form class="unirse" id="f-unirse">
+        <input id="codigo" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="CÓDIGO" aria-label="Código de sala">
+        <button class="btn madera" id="b-unirse" type="submit">Unirse</button>
+      </form>
+      <button class="btn claro" id="b-reglas" type="button">Cómo se juega</button>
+      <p class="nota" id="aviso-portada" role="status"></p>
+    </div>
+    <div class="pergamino nube" id="nube"></div>
+    <div class="pergamino partidas" id="partidas" hidden></div>
+    <p class="creditos">Iconos de <a href="https://game-icons.net" target="_blank" rel="noopener">game-icons.net</a> (CC BY 3.0): Lorc, Delapouite, Skoll, Sbed, Carl Olsen, Kier Heyl, Willdabeast, Zeromancer, DarkZaitzev y otros autores. Vista 3D con <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> (MIT).</p>
+  </div>
+</section>
+
+<!-- ============ SALA ============ -->
+<section id="sala" class="pantalla" hidden>
+  <div class="centro">
+    <div class="pergamino">
+      <div class="codigo" id="sala-codigo">
+        <span>Código de la sala</span>
+        <b id="codigo-grande">····</b>
+        <p class="nota">Compártelo: los demás lo escriben en «Unirse».</p>
+      </div>
+      <h2 id="sala-titulo">Elige tus héroes</h2>
+      <p class="nota" id="sala-ayuda">Toca un héroe para llevarlo. Puedes llevar varios.</p>
+      <div class="heroes-sel" id="heroes-sel"></div>
+      <h2 style="font-size:24px;margin-top:20px">Aventureros</h2>
+      <ul class="jugadores" id="lista-jugadores"></ul>
+      <label class="campo" style="margin-top:18px" id="campo-mision">Empezar por
+        <select class="mision" id="sel-mision"></select>
+      </label>
+      <label class="campo" id="campo-dificultad" hidden style="margin-top:12px">Dificultad
+        <select class="mision" id="sel-dificultad">
+          <option value="aventurero">Aventurero: si caéis todos, repetís el piso</option>
+          <option value="heroe">Héroe: si caéis todos, se acaba</option>
+          <option value="leyenda">Leyenda: se acaba, y quien cae, cae para siempre</option>
+        </select>
+      </label>
+      <label class="campo" id="campo-semilla" hidden style="margin-top:12px">Semilla (opcional)
+        <input id="semilla" class="semilla" maxlength="8" autocomplete="off" autocapitalize="characters" placeholder="Al azar">
+        <span class="nota" style="font-weight:400">Con la misma semilla salen las mismas mazmorras: compártela para que otro grupo juegue el mismo reto.</span>
+      </label>
+      <div class="fila" style="margin-top:18px">
+        <button class="btn claro" id="b-salir-sala">Salir</button>
+        <button class="btn" id="b-empezar">Empezar la campaña</button>
+      </div>
+      <p class="nota" id="sala-espera" hidden>Esperando a que el anfitrión empiece…</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRIEFING ============ -->
+<section id="briefing" class="pantalla" hidden>
+  <div class="centro">
+    <div class="pergamino">
+      <div class="mapa-num" id="br-num"></div>
+      <h2 id="br-titulo"></h2>
+      <div class="conectados" id="br-conectados" hidden></div>
+      <p id="br-intro" style="font-size:18px"></p>
+      <p class="objetivo" id="br-objetivo"></p>
+      <div class="fila" style="margin-top:16px">
+        <button class="btn claro" id="b-campamento">Volver al campamento</button>
+        <button class="btn" id="b-entrar">Entrar en la mazmorra</button>
+      </div>
+      <p class="nota" id="br-espera" hidden>Esperando a que el anfitrión abra la mazmorra…</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JUEGO ============ -->
+<section id="juego" class="pantalla" hidden>
+  <header class="barra">
+    <h1 id="j-titulo"></h1>
+    <span class="reloj-rondas" id="reloj-rondas" hidden></span>
+    <button class="icono-btn texto" id="b-vista" aria-label="Cambiar a vista de mesa 3D">3D</button>
+    <button class="icono-btn" id="b-pantalla" aria-label="Pantalla completa"></button>
+    <button class="icono-btn" id="b-vertodo" aria-label="Ver todo el tablero"></button>
+    <button class="icono-btn" id="b-reaccion" aria-label="Reacciones" hidden></button>
+    <button class="icono-btn" id="b-registro" aria-label="Diario y menú"></button>
+  </header>
+  <div class="hojas" id="hojas"></div>
+  <div class="zona-tablero">
+    <canvas id="lienzo" aria-label="Tablero de juego"></canvas>
+    <div class="cartel" id="cartel" style="opacity:0"></div>
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <div class="capa-sellos" id="capa-sellos" aria-hidden="true"></div>
+    <div class="panel-reacciones" id="panel-reacciones" hidden></div>
+    <div class="giro3d" id="giro3d" hidden>
+      <button class="icono-btn" id="b-girar-izq" aria-label="Girar a la izquierda"><svg viewBox="0 0 24 24"><path d="M7 7h7a5 5 0 1 1-5 5" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M10 3L6 7l4 4" stroke="currentColor" stroke-width="2.4" fill="none"/></svg></button>
+      <button class="icono-btn" id="b-girar-der" aria-label="Girar a la derecha"><svg viewBox="0 0 24 24"><path d="M17 7h-7a5 5 0 1 0 5 5" stroke="currentColor" stroke-width="2.4" fill="none"/><path d="M14 3l4 4-4 4" stroke="currentColor" stroke-width="2.4" fill="none"/></svg></button>
+    </div>
+
+  </div>
+  <div class="acciones" id="acciones">
+    <div class="estado-turno" id="estado-turno"></div>
+    <div class="botonera" id="botonera"></div>
+  </div>
+</section>
+
+<!-- ============ ARMERÍA ============ -->
+<section id="armeria" class="pantalla" hidden>
+  <div class="centro" style="max-width:640px">
+    <div class="pergamino">
+      <h2>El campamento</h2>
+      <div class="conectados" id="arm-conectados" hidden></div>
+      <div class="nota" id="arm-sub"></div>
+      <div class="pestanas" id="arm-pestanas"></div>
+      <div id="arm-cuerpo" style="margin-top:14px"></div>
+      <div class="fila" style="margin-top:18px">
+        <button class="btn" id="b-siguiente">Bajar a la siguiente misión</button>
+      </div>
+      <p class="nota" id="arm-espera" hidden>El anfitrión decidirá cuándo bajar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL ============ -->
+<section id="final" class="pantalla" hidden>
+  <div class="centro">
+    <div class="titulo"><h1 id="final-titulo">Victoria<small>Las criptas duermen</small></h1></div>
+    <div class="pergamino">
+      <p style="font-size:19px" id="final-texto">Velmor el Pálido ha caído y sus huesos no volverán a levantarse. La Hermandad grabará vuestros nombres en la piedra.</p>
+      <div id="final-heroes"></div>
+      <div class="fila"><button class="btn" id="b-nueva">Nueva campaña</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SUPERPOSICIONES ============ -->
+<div class="velo" id="dados" hidden><div class="mesa-dados" id="mesa-dados"></div></div>
+<div class="velo" id="modal" hidden><div class="pergamino" id="modal-cuerpo"></div></div>
+
+<aside class="registro" id="registro" hidden aria-label="Diario">
+  <header><h2>Diario</h2><button class="icono-btn" id="b-cerrar-registro" aria-label="Cerrar"></button></header>
+  <div class="ficha-detalle fila">
+    <button class="btn madera" id="b-sonido" style="flex:1 1 120px;min-height:40px;font-size:15px">Sonido: sí</button>
+    <button class="btn madera" id="b-velocidad" style="flex:1 1 120px;min-height:40px;font-size:15px">Velocidad: normal</button>
+    <button class="btn madera" id="b-auto-reac" style="flex:1 1 120px;min-height:40px;font-size:15px">Reacciones solas: sí</button>
+    <button class="btn madera" id="b-al-campamento" style="flex:1 1 100%;min-height:40px;font-size:15px" hidden>Volver al campamento</button>
+    <button class="btn claro" id="b-abandonar" style="flex:1 1 120px;min-height:40px;font-size:15px">Abandonar</button>
+  </div>
+  <div class="ficha-detalle objetivo-diario" id="diario-mision" hidden></div>
+  <div class="ficha-detalle" id="diario-sala" hidden></div>
+  <label class="ficha-detalle campo-figuras">Figuras en 3D
+    <select id="sel-figuras">
+      <option value="auto">Ilustraciones propias (si las hay) o miniaturas</option>
+      <option value="pintadas">Miniaturas pintadas</option>
+      <option value="plastico">Miniaturas de plástico</option>
+    </select>
+  </label>
+  <ol id="diario"></ol>
+</aside>
+
+<div class="aviso-anfitrion" id="aviso-anfitrion" hidden role="status">
+      <span>El anfitrión no responde. La partida está guardada.</span>
+      <button class="btn">Seguir yo</button>
+    </div>
+
+<script type="module" src="js/ui.js?v=20261022113125"></script>
+</body>
+</html>
