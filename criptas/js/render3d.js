@@ -373,7 +373,7 @@ export class Escena3D {
     if (!plastico) { const borde = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.03, 0.66), new THREE.MeshStandardMaterial({ color, roughness: 0.5 })); borde.position.y = 0.015; g.add(borde); }
     // Miniatura modelada (ver miniaturas.js).
     const mini = sprite ? this.figuraSprite(sprite, f.jefe) : crearMiniatura(THREE, f.tipo, { fem: f.fem, jefe: f.jefe, plastico });
-    mini.position.y = 0.08;
+    mini.position.y = 0.04;
     g.add(mini);
     g.userData.mini = mini;
     // Anillo del turno.
@@ -450,7 +450,9 @@ export class Escena3D {
     if (!tex) { tex = new THREE.Texture(img); tex.needsUpdate = true; tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4; this.texSprites.set(img.src, tex); }
     const alto = jefe ? 1.35 : 1.12;
     const ancho = alto * (img.naturalWidth / img.naturalHeight);
-    const geo = new THREE.PlaneGeometry(ancho, alto); geo.translate(0, alto / 2, 0);
+    const geo = new THREE.PlaneGeometry(ancho, alto);
+    // Bajamos la lámina para compensar el margen transparente inferior del sprite y que apoye justo en la base
+    geo.translate(0, alto * 0.47, 0);
     const lamina = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.75, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.55 }));
     lamina.castShadow = true;
     lamina.rotation.x = -0.28; // un poco inclinada hacia la cámara, que mira desde arriba
