@@ -322,13 +322,14 @@ function pintarNube(u, fallo = false) {
     return;
   }
   const salirBtn = '<button class="btn claro" id="b-salir-nube">Cerrar sesión</button>';
+  const panelBtn = moduloNube?.esAdmin?.() ? ' <a href="panel.html" class="btn claro" style="text-decoration:none;display:inline-block">⚙️ Panel Admin</a>' : '';
   const quien = u ? esc(u.displayName || u.email || 'tu cuenta') : '';
   if (!u) caja.innerHTML = '<p>Criptas de Velmor está en pruebas cerradas. Entra con tu cuenta de Google para jugar.</p><button class="btn" id="b-entrar-nube">Entrar con Google</button>';
   else if (app.acceso === 'comprobando') caja.innerHTML = `<p>Comprobando el acceso de <b>${quien}</b>…</p>`;
   else if (app.acceso === 'denegado') caja.innerHTML = app.solicitado
     ? `<p>Solicitud enviada para <b>${esc(u.email)}</b>. En cuanto te den acceso, recarga la página.</p>${salirBtn}`
     : `<p>La cuenta <b>${esc(u.email)}</b> todavía no tiene acceso.</p><button class="btn" id="b-solicitar">Solicitar acceso</button>${salirBtn}`;
-  else caja.innerHTML = `<p>☁ Tus partidas se guardan en la nube como <b>${quien}</b>.${fallo ? ' <span class="nota">(No se ha podido leer la nube: revisa la conexión.)</span>' : ''}</p>${salirBtn}`;
+  else caja.innerHTML = `<p>☁ Tus partidas se guardan en la nube como <b>${quien}</b>.${fallo ? ' <span class="nota">(No se ha podido leer la nube: revisa la conexión.)</span>' : ''}</p>${panelBtn} ${salirBtn}`;
   $('#b-entrar-nube')?.addEventListener('click', () => moduloNube?.entrar().catch((e) => toast('No se pudo iniciar sesión: ' + (e.code || e.message), 'peligro')));
   $('#b-salir-nube')?.addEventListener('click', () => moduloNube?.salir());
   $('#b-solicitar')?.addEventListener('click', async () => {
