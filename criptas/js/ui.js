@@ -279,65 +279,26 @@ async function importarPartida(archivo) {
   } catch { toast('Ese archivo no es una partida de Criptas.', 'peligro'); }
 }
 
-// ---------- Partidas en la nube (Firestore, con cuenta de Google) ----------
+// ---------- Partidas en local (sin requerir Google/Firebase) ----------
 let moduloNube = null;
-const nube = () => moduloNube;
-// Acceso por lista: solo juegan las cuentas que el panel ha autorizado.
-// (Las reglas de Firebase lo hacen cumplir; esto es la pantalla.)
+const nube = () => null;
+
 function ponerAcceso(estado) {
-  app.acceso = estado; // 'comprobando' | 'fuera' | 'denegado' | 'ok'
+  app.acceso = estado;
   document.getElementById('portada').dataset.acceso = estado;
 }
-ponerAcceso('comprobando');
-import('./nube.js').then((m) => {
-  moduloNube = m;
-  m.alCambiarUsuario(async (u) => {
-    app.nubePartidas = [];
-    if (!u) { ponerAcceso('fuera'); pintarNube(null); return pintarPartidas(); }
-    ponerAcceso('comprobando'); pintarNube(u);
-    let ok = false;
-    try { ok = await m.tieneAcceso(); } catch (e) { ok = leer('criptas_acceso') === u.email; }
-    if (!ok) { app.solicitado = await m.haSolicitado().catch(() => false); ponerAcceso('denegado'); pintarNube(u); return pintarPartidas(); }
-    guardar('criptas_acceso', u.email);
-    ponerAcceso('ok'); pintarNube(u);
-    if (!$('#nombre').value.trim() && u.displayName) $('#nombre').value = u.displayName.split(' ')[0];
-    try {
-      app.nubePartidas = await m.listar();
-      // Lo que solo estaba en este dispositivo, a la nube.
-      const enNube = new Set(app.nubePartidas.map((p) => p.id));
-      for (const p of Object.values(leerPartidas())) if (p.estado && !enNube.has(p.id)) m.subir(p, true);
-    } catch (e) { console.warn('Nube no disponible:', e.message); pintarNube(u, true); }
-    pintarPartidas();
-  });
-}).catch(() => {
-  // Sin conexión con Google: si este dispositivo ya tenía acceso, se juega en local.
-  ponerAcceso(leer('criptas_acceso') ? 'ok' : 'fuera');
-  pintarNube(null, true);
-});
-function pintarNube(u, fallo = false) {
+
+// Acceso siempre concedido para jugar libremente
+ponerAcceso('ok');
+pintarNubeLocal();
+pintarPartidas();
+
+function pintarNubeLocal() {
   const caja = $('#nube');
-  if (fallo && !u) {
-    caja.innerHTML = app.acceso === 'ok' ? '<p>Sin conexión con la nube: puedes jugar con las partidas de este dispositivo.</p>'
-      : '<p>No se puede comprobar tu acceso ahora mismo. Revisa la conexión y recarga.</p>';
-    return;
+  if (caja) {
+    caja.innerHTML = '<p>💾 Modo libre: juega sin necesidad de cuenta. Todas tus partidas se guardan automáticamente en tu navegador.</p>';
   }
-  const salirBtn = '<button class="btn claro" id="b-salir-nube">Cerrar sesión</button>';
-  const panelBtn = moduloNube?.esAdmin?.() ? ' <a href="panel.html" class="btn claro" style="text-decoration:none;display:inline-block">⚙️ Panel Admin</a>' : '';
-  const quien = u ? esc(u.displayName || u.email || 'tu cuenta') : '';
-  if (!u) caja.innerHTML = '<p>Criptas de Velmor está en pruebas cerradas. Entra con tu cuenta de Google para jugar.</p><button class="btn" id="b-entrar-nube">Entrar con Google</button>';
-  else if (app.acceso === 'comprobando') caja.innerHTML = `<p>Comprobando el acceso de <b>${quien}</b>…</p>`;
-  else if (app.acceso === 'denegado') caja.innerHTML = app.solicitado
-    ? `<p>Solicitud enviada para <b>${esc(u.email)}</b>. En cuanto te den acceso, recarga la página.</p>${salirBtn}`
-    : `<p>La cuenta <b>${esc(u.email)}</b> todavía no tiene acceso.</p><button class="btn" id="b-solicitar">Solicitar acceso</button>${salirBtn}`;
-  else caja.innerHTML = `<p>☁ Tus partidas se guardan en la nube como <b>${quien}</b>.${fallo ? ' <span class="nota">(No se ha podido leer la nube: revisa la conexión.)</span>' : ''}</p>${panelBtn} ${salirBtn}`;
-  $('#b-entrar-nube')?.addEventListener('click', () => moduloNube?.entrar().catch((e) => toast('No se pudo iniciar sesión: ' + (e.code || e.message), 'peligro')));
-  $('#b-salir-nube')?.addEventListener('click', () => moduloNube?.salir());
-  $('#b-solicitar')?.addEventListener('click', async () => {
-    try { await moduloNube.solicitarAcceso(); app.solicitado = true; pintarNube(u); toast('Solicitud enviada.', 'bueno'); }
-    catch (e) { toast('No se pudo enviar la solicitud: ' + (e.code || e.message), 'peligro'); }
-  });
 }
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') moduloNube?.vaciar(); });
 
 // Dos modos de juego; en los dos se juega solo o con sala.
 document.querySelectorAll('#portada [data-modo]').forEach((b) => b.addEventListener('click', () => {
