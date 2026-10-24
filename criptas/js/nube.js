@@ -45,11 +45,18 @@ export const salir = () => signOut(auth);
 
 // Lista de acceso: permitidos/{correo} en Firestore (la gestiona el panel).
 // Si el administrador ha abierto la lista (config/acceso.abierto), entra cualquiera con cuenta de Google.
+export const CORREO_ADMIN = 'alfre10do@gmail.com';
+
+export function esAdmin() {
+  return usuario?.email?.toLowerCase() === CORREO_ADMIN.toLowerCase();
+}
+
 export async function accesoAbierto() {
   try { return (await getDoc(doc(db, 'config', 'acceso'))).data()?.abierto === true; } catch { return false; }
 }
 export async function tieneAcceso() {
   if (!usuario?.email) return false;
+  if (esAdmin()) return true;
   if (await accesoAbierto()) return true;
   const r = await getDoc(doc(db, 'permitidos', usuario.email.toLowerCase()));
   return r.exists();
