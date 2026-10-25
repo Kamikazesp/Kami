@@ -1596,11 +1596,15 @@
       }
 
       static getTorsoCompositePassiveDef(combatant) {
-        if (!combatant || !combatant.parts || !combatant.parts.torso) {
+        if (!combatant) {
+          return { total: 1, base: 1, limbBonus: 0, contributors: [] };
+        }
+        const parts = combatant.parts || combatant;
+        if (!parts || !parts.torso) {
           return { total: 1, base: 1, limbBonus: 0, contributors: [] };
         }
         const buffs = combatant.buffs || { atkMult: 1, defMult: 1, spdBonus: 0 };
-        const torsoEff = PartMechanics.computeEffectiveStats(combatant.parts.torso, buffs);
+        const torsoEff = PartMechanics.computeEffectiveStats(parts.torso, buffs);
         const base = torsoEff.passiveDef;
 
         const contributors = [];
@@ -1608,7 +1612,7 @@
         const outerSlots = ['head', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
 
         for (const slot of outerSlots) {
-          const part = combatant.parts[slot];
+          const part = parts[slot];
           if (part && !part.isDestroyed) {
             const eff = PartMechanics.computeEffectiveStats(part, buffs);
             const bonus = Math.max(1, Math.round(eff.def * 0.12));
@@ -3036,7 +3040,7 @@
 
           let passiveStr = `Pasiva: ${eff.passiveDef}`;
           if (slot === 'torso') {
-            const comp = PartMechanics.getTorsoCompositePassiveDef({ parts });
+            const comp = PartMechanics.getTorsoCompositePassiveDef(partsMap);
             passiveStr = `Pasiva Compuesta: ${comp.total} (Base ${comp.base} + ${comp.limbBonus} Red)`;
           }
 
