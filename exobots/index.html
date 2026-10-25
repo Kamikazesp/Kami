@@ -59,7 +59,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* CABECERA PRINCIPAL */
+    /* CABECERA SUPERIOR */
     .hud-header {
       display: flex;
       flex-wrap: wrap;
@@ -100,9 +100,9 @@
 
     .brand-title {
       font-family: var(--font-display);
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       color: #ffffff;
       text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
     }
@@ -137,7 +137,6 @@
       font-size: 0.78rem;
       text-transform: uppercase;
       font-weight: 600;
-      letter-spacing: 0.5px;
     }
 
     .telemetry-pill .val-credits {
@@ -365,7 +364,173 @@
       padding-bottom: 3px;
     }
 
-    /* BARRA DE PROGRESO DE LA TORRE */
+    /* PANTALLA: LOBBY DE COMBATE */
+    .lobby-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr 1.1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 1100px) {
+      .lobby-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .lobby-center-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px 24px;
+      gap: 20px;
+      background: linear-gradient(180deg, rgba(14, 26, 52, 0.96) 0%, rgba(10, 18, 36, 0.98) 100%);
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.18);
+    }
+
+    .btn-epic-battle {
+      background: linear-gradient(135deg, #00f0ff, #0088ff);
+      color: #061124;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 18px 36px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.6);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-epic-battle:hover {
+      transform: scale(1.04) translateY(-2px);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.75), inset 0 0 14px rgba(255, 255, 255, 0.8);
+      color: #000;
+    }
+
+    /* ARENA DE COMBATE (2 COLUMNAS CARA A CARA) */
+    .combat-arena-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 950px) {
+      .combat-arena-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* BARRA DE PLANIFICACIÓN DE TURNO (ACTION QUEUE) */
+    .action-planner-panel {
+      background: linear-gradient(90deg, rgba(14, 28, 56, 0.96), rgba(20, 36, 72, 0.96));
+      border: 2px solid var(--amber);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 0 20px rgba(255, 184, 0, 0.18);
+    }
+
+    .queue-items-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-height: 48px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px dashed rgba(255, 184, 0, 0.35);
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+
+    .queue-pill {
+      background: rgba(255, 184, 0, 0.15);
+      border: 1px solid var(--amber);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: popIn 0.2s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .queue-remove-btn {
+      background: rgba(255, 51, 92, 0.25);
+      border: 1px solid var(--red);
+      color: #ff99ab;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 800;
+      transition: all 0.15s ease;
+    }
+
+    .queue-remove-btn:hover {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .planner-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-execute-attack {
+      background: linear-gradient(135deg, #ffb800, #ff8800);
+      color: #061220;
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 12px 28px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(255, 184, 0, 0.5);
+      transition: all 0.18s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-execute-attack:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 24px rgba(255, 184, 0, 0.7);
+    }
+
+    .btn-execute-attack:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* PISO Y ETAPAS */
     .tower-banner {
       display: flex;
       flex-wrap: wrap;
@@ -417,46 +582,6 @@
       border-color: var(--red);
       color: #ffffff;
       box-shadow: 0 0 16px rgba(255, 51, 92, 0.45);
-    }
-
-    /* ARENA DE COMBATE */
-    .combat-arena {
-      display: grid;
-      grid-template-columns: 1.15fr 0.95fr 1.15fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    @media (max-width: 1200px) {
-      .combat-arena {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .combatant-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-      gap: 10px;
-    }
-
-    .combatant-name {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-    }
-
-    .speed-badge {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid var(--border-dim);
-      color: var(--cyan);
     }
 
     /* NÚCLEO TORSO Y PUNTOS DE ACCIÓN */
@@ -540,7 +665,7 @@
     /* VISOR MECHA SVG */
     .mecha-stage {
       position: relative;
-      height: 335px;
+      height: 320px;
       background:
         radial-gradient(circle at 50% 45%, rgba(0, 240, 255, 0.1), transparent 70%),
         linear-gradient(180deg, rgba(8, 14, 28, 0.9) 0%, rgba(12, 22, 44, 0.96) 100%);
@@ -549,7 +674,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       overflow: hidden;
     }
 
@@ -561,8 +686,8 @@
     .mecha-svg {
       width: 100%;
       height: 100%;
-      max-width: 390px;
-      max-height: 330px;
+      max-width: 380px;
+      max-height: 320px;
       user-select: none;
     }
 
@@ -765,27 +890,18 @@
       border-color: var(--green);
     }
 
-    /* TELEMETRÍA CENTRAL Y REGISTRO DE COMBATE */
-    .tactical-banner {
-      padding: 14px 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border-bright);
-      background: rgba(0, 240, 255, 0.08);
-      margin-bottom: 14px;
-      font-size: 0.92rem;
-      line-height: 1.5;
+    /* TELEMETRÍA Y REGISTRO AL FINAL (PANEL INFERIOR) */
+    .combat-bottom-panel {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 18px;
+      align-items: stretch;
     }
 
-    .tactical-banner.targeting {
-      background: rgba(255, 51, 92, 0.16);
-      border-color: var(--red);
-      color: #ffe6ec;
-      animation: alertPulse 1.1s infinite alternate;
-    }
-
-    @keyframes alertPulse {
-      from { box-shadow: 0 0 6px rgba(255, 51, 92, 0.25); }
-      to { box-shadow: 0 0 18px rgba(255, 51, 92, 0.55); }
+    @media (max-width: 1000px) {
+      .combat-bottom-panel {
+        grid-template-columns: 1fr;
+      }
     }
 
     .inspector-box {
@@ -793,12 +909,12 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 8px;
       padding: 14px;
-      margin-bottom: 14px;
       font-size: 0.9rem;
+      height: 100%;
     }
 
     .combat-log {
-      height: 360px;
+      height: 280px;
       overflow-y: auto;
       background: rgba(5, 10, 20, 0.96);
       border: 1px solid rgba(0, 240, 255, 0.2);
@@ -1020,7 +1136,8 @@
     </div>
 
     <nav class="hud-nav">
-      <button class="nav-tab active" id="nav-btn-combat" onclick="window.App.switchScreen('combat')" style="display: none;">⚔️ Torre de Combate</button>
+      <button class="nav-tab active" id="nav-btn-lobby" onclick="window.App.switchScreen('lobby')" style="display: none;">🚪 Puesto de Mando (Lobby)</button>
+      <button class="nav-tab" id="nav-btn-combat" onclick="window.App.switchScreen('combat')" style="display: none;">⚔️ Arena de Combate</button>
       <button class="nav-tab" id="nav-btn-garage" onclick="window.App.switchScreen('garage')" style="display: none;">🔧 Garaje (<span id="nav-inv-count">0</span>)</button>
       <button class="nav-tab" id="nav-btn-shop" onclick="window.App.switchScreen('shop')" style="display: none;">🛒 Tienda Orbital</button>
       <a href="../index.html" class="nav-tab portal-link" title="Volver al Portal de Juegos Kami">🌐 Portal Kami</a>
@@ -1044,28 +1161,104 @@
       <div id="starter-cards-container" class="starter-grid"></div>
     </section>
 
-    <!-- 2. PANTALLA: TORRE DE COMBATE -->
-    <section id="screen-combat" class="screen">
+    <!-- 2. PANTALLA: LOBBY PREVIO AL COMBATE -->
+    <section id="screen-lobby" class="screen">
       <div class="tower-banner">
         <div>
-          <div style="font-family: var(--font-display); font-size: 1.1rem; color: #ffffff; letter-spacing: 0.8px;">
-            <span id="tower-floor-title">TORRE DE ÓRBITA — PISO 1</span>
-            <span id="tower-tier-badge" style="margin-left: 8px; font-size: 0.85rem; color: var(--cyan); font-family: var(--font-mono);">[Tier 1]</span>
+          <div style="font-family: var(--font-display); font-size: 1.15rem; color: #ffffff; letter-spacing: 0.8px;">
+            <span id="lobby-floor-title">TORRE DE ÓRBITA — PISO 1</span>
+            <span id="lobby-tier-badge" style="margin-left: 8px; font-size: 0.85rem; color: var(--cyan); font-family: var(--font-mono);">[Tier 1]</span>
           </div>
-          <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 3px;" id="tower-subtitle">
-            Cada piso consta de 5 combates seguidos. Vencer al Jefe del Combate 5 desbloquea el siguiente piso.
+          <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 3px;">
+            Sala de despliegue táctico. Revisa tu robot, calibra tus piezas o entra a la arena cuando estés listo.
           </div>
         </div>
-        <div class="stage-track" id="tower-stage-track"></div>
+        <div class="stage-track" id="lobby-stage-track"></div>
       </div>
 
-      <div class="combat-arena">
-        <!-- COLUMNA: ROBOT JUGADOR -->
+      <div class="lobby-grid">
+        <!-- IZQUIERDA: TU ROBOT LISTO -->
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <div class="panel-title">🤖 Tu Robot Listo</div>
+            <button class="cyber-btn" style="padding: 5px 12px; font-size: 0.8rem;" onclick="window.App.switchScreen('garage')">🔧 Ir al Garaje</button>
+          </div>
+          <div class="mecha-stage" id="lobby-player-svg-stage" style="height: 280px;"></div>
+          <div id="lobby-player-stats-box" style="font-size: 0.88rem; line-height: 1.6; background: rgba(0,0,0,0.35); padding: 12px; border-radius: 6px;"></div>
+        </div>
+
+        <!-- CENTRO: DESPLIEGUE Y BOTÓN DE INICIAR PELEA -->
+        <div class="cyber-panel lobby-center-panel">
+          <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--amber); font-weight: 700;">
+            🛰️ TRANSMISIÓN DE SECTOR ENLACE ACTIVO
+          </div>
+
+          <h2 style="font-family: var(--font-display); font-size: 1.8rem; color: #ffffff; letter-spacing: 1px;" id="lobby-vs-title">
+            COMBATE INMINENTE
+          </h2>
+
+          <div style="font-size: 1rem; color: var(--text-muted); max-width: 440px;" id="lobby-vs-desc">
+            Enfrentamiento en la Torre. Si vences, subirás el Confort de tus piezas y podrás robarle 1 pieza al enemigo.
+          </div>
+
+          <button class="btn-epic-battle" onclick="window.App.startBattleFromLobby()">
+            ⚔️ INICIAR PELEA
+          </button>
+
+          <div style="display: flex; gap: 12px; margin-top: 8px;">
+            <button class="cyber-btn amber" style="font-size: 0.84rem; padding: 8px 16px;" onclick="window.App.switchScreen('shop')">
+              🛒 Mercado Negro
+            </button>
+            <button class="cyber-btn" style="font-size: 0.84rem; padding: 8px 16px;" onclick="window.App.switchScreen('garage')">
+              🔩 Modificar Piezas
+            </button>
+          </div>
+        </div>
+
+        <!-- DERECHA: RADAR / HOSTIL DETECTADO -->
+        <div class="cyber-panel">
+          <div class="panel-header">
+            <div class="panel-title" style="color: var(--red);">🎯 Hostil Detectado</div>
+            <span id="lobby-enemy-badge" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--red); font-weight: 700;">AMENAZA</span>
+          </div>
+          <div class="mecha-stage" id="lobby-enemy-svg-stage" style="height: 280px; border-color: rgba(255, 51, 92, 0.35);"></div>
+          <div id="lobby-enemy-stats-box" style="font-size: 0.88rem; line-height: 1.6; background: rgba(0,0,0,0.35); padding: 12px; border-radius: 6px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PANTALLA: ARENA DE COMBATE -->
+    <section id="screen-combat" class="screen">
+      <!-- CABECERA DE COMBATE (RONDA, VELOCIDAD Y RETIRADA) -->
+      <div class="tower-banner">
+        <div>
+          <div style="font-family: var(--font-display); font-size: 1.1rem; color: #ffffff;">
+            <span id="tower-floor-title">TORRE DE ÓRBITA — PISO 1</span>
+            <span id="combat-round-badge" style="margin-left: 10px; color: var(--amber); font-weight: 700;">Ronda 1</span>
+          </div>
+          <div style="font-size: 0.86rem; color: var(--text-muted); margin-top: 2px;" id="turn-order-text">
+            Calculando orden de turno...
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span id="active-turn-pill" style="font-family: var(--font-display); font-size: 0.95rem; font-weight: 800; color: var(--cyan); background: rgba(0,240,255,0.12); padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border-dim);">
+            TU TURNO
+          </span>
+          <button class="cyber-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.App.switchScreen('lobby')">
+            🚪 Volver al Lobby
+          </button>
+        </div>
+      </div>
+
+      <!-- FILA SUPERIOR: LOS DOS ROBOTS CARA A CARA (FRENTE A FRENTE) -->
+      <div class="combat-arena-split">
+        <!-- COLUMNA IZQUIERDA: TU ROBOT -->
         <div class="cyber-panel" id="player-combat-panel">
           <div class="combatant-header">
             <div>
               <div class="combatant-name" style="color: var(--cyan);" id="player-combat-name">TU ROBOT</div>
-              <div style="font-size: 0.85rem; color: var(--text-muted);" id="player-combat-sub">Chasis Operativo</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted);" id="player-combat-sub">Chasis Aliado</div>
             </div>
             <div class="speed-badge" id="player-combat-spd">⚡ Velocidad: 0 SPD</div>
           </div>
@@ -1092,51 +1285,14 @@
 
           <div class="mecha-stage" id="player-svg-stage"></div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-weight: 700; font-size: 0.88rem; color: var(--cyan);">TUS 6 PIEZAS (Haz clic para usar)</span>
-            <button class="cyber-btn amber" id="btn-end-turn" onclick="window.App.endPlayerTurn()" style="padding: 7px 14px; font-size: 0.8rem;">
-              ⏭️ Terminar Turno (Ahorrar PA)
-            </button>
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--cyan); margin-bottom: 8px;">
+            TUS PIEZAS (Haz clic para planificar acción)
           </div>
 
           <div class="parts-deck" id="player-parts-deck"></div>
         </div>
 
-        <!-- COLUMNA: REGISTRO Y TELEMETRÍA TÁCTICA -->
-        <div class="cyber-panel">
-          <div class="panel-header">
-            <div class="panel-title">📡 Registro y Guía Táctica</div>
-            <span id="combat-round-badge" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--amber); font-weight: 700;">Ronda 1</span>
-          </div>
-
-          <div id="combat-order-banner" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); padding: 9px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 0.84rem; display: flex; justify-content: space-between; align-items: center;">
-            <span id="turn-order-text">Calculando orden de turno...</span>
-            <span id="active-turn-pill" style="color: var(--cyan); font-weight: 700;">TU TURNO</span>
-          </div>
-
-          <div class="tactical-banner" id="combat-action-banner">
-            Selecciona una de tus piezas para atacar, activar guardia defensiva o usar una habilidad táctica.
-          </div>
-
-          <div class="inspector-box" id="combat-part-inspector">
-            <div style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">
-              💡 <strong>Cómo funciona el combate:</strong><br>
-              • <strong>Ataque:</strong> Selecciona un arma tuya y luego haz clic en qué pieza del enemigo quieres golpear.<br>
-              • <strong>Guardia:</strong> Activa un escudo de intercepción que protege a tu robot absorbiendo el siguiente impacto.<br>
-              • <strong>Confort:</strong> Cada victoria entrena tus piezas hasta +50% de estadísticas.
-            </div>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Consola de Combate en Vivo</span>
-            <button onclick="window.App.exportCombatEventsJSON()" style="background: transparent; border: 1px solid var(--border-dim); color: var(--cyan); font-family: var(--font-mono); font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; cursor: pointer;" title="Inspeccionar datos serializables para multijugador online">
-              { } Ver JSON Online
-            </button>
-          </div>
-          <div class="combat-log" id="combat-log"></div>
-        </div>
-
-        <!-- COLUMNA: ROBOT ENEMIGO -->
+        <!-- COLUMNA DERECHA: ROBOT ENEMIGO -->
         <div class="cyber-panel" id="enemy-combat-panel">
           <div class="combatant-header">
             <div>
@@ -1168,30 +1324,96 @@
 
           <div class="mecha-stage" id="enemy-svg-stage"></div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-weight: 700; font-size: 0.88rem; color: var(--red);">PIEZAS ENEMIGAS (Haz clic para dispararles)</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 700; font-size: 0.88rem; color: var(--red);">PIEZAS ENEMIGAS (Haz clic para objetivo)</span>
             <span style="font-size: 0.8rem; color: var(--text-muted);" id="enemy-guard-summary">Sin Guardia</span>
           </div>
 
           <div class="parts-deck" id="enemy-parts-deck"></div>
         </div>
       </div>
+
+      <!-- FILA MEDIA: PLANIFICADOR DE ACCIONES Y BOTÓN ATACAR -->
+      <div class="action-planner-panel" id="action-planner-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <strong style="color: var(--amber); font-size: 0.95rem;">🎯 Planificador del Turno:</strong>
+            <span style="font-size: 0.88rem; color: var(--text-muted); margin-left: 6px;">
+              Elige tus acciones y pulsa <strong>ATACAR</strong> para ejecutarlas en secuencia.
+            </span>
+          </div>
+          <div id="planner-ap-summary" style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--amber); font-weight: 700;">
+            PA Disponibles: 4 / 10
+          </div>
+        </div>
+
+        <!-- COLA DE ACCIONES SELECCIONADAS -->
+        <div class="queue-items-wrap" id="queue-items-wrap">
+          <span style="color: var(--text-muted); font-size: 0.86rem;" id="queue-empty-msg">
+            No has seleccionado acciones todavía. Haz clic en tus piezas para planificar ataques o guardias.
+          </span>
+        </div>
+
+        <!-- CONTROLES: BOTÓN ATACAR Y TERMINAR TURNO -->
+        <div class="planner-controls">
+          <div style="display: flex; gap: 8px;">
+            <button class="cyber-btn red" style="padding: 8px 14px; font-size: 0.82rem;" id="btn-clear-queue" onclick="window.App.clearPlannedQueue()" disabled>
+              🔄 Limpiar Plan
+            </button>
+            <button class="cyber-btn" style="padding: 8px 16px; font-size: 0.82rem;" id="btn-end-turn-direct" onclick="window.App.endPlayerTurn()">
+              ⏭️ Terminar Turno (Ahorrar PA)
+            </button>
+          </div>
+
+          <button class="btn-execute-attack" id="btn-execute-attack" onclick="window.App.executePlannedTurn()" disabled>
+            ⚔️ ATACAR (Ejecutar Acciones)
+          </button>
+        </div>
+      </div>
+
+      <!-- FILA INFERIOR (AL FINAL): REGISTRO TÁCTICO Y CONSOLA DE COMBATE -->
+      <div class="cyber-panel">
+        <div class="panel-header">
+          <div class="panel-title">📡 Registro y Guía Táctica del Combate</div>
+          <button onclick="window.App.exportCombatEventsJSON()" style="background: transparent; border: 1px solid var(--border-dim); color: var(--cyan); font-family: var(--font-mono); font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; cursor: pointer;">
+            { } Ver JSON Online
+          </button>
+        </div>
+
+        <div class="combat-bottom-panel">
+          <!-- DETALLES DE PIEZA (INSPECTOR) -->
+          <div class="inspector-box" id="combat-part-inspector">
+            <div style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">
+              💡 <strong>Instrucciones de Combate:</strong><br>
+              1. Haz clic en una de tus armas de <strong>Ataque</strong> y luego elige qué pieza enemiga quieres golpear.<br>
+              2. O haz clic en un escudo para activar <strong>Guardia</strong> (bloqueará el próximo impacto).<br>
+              3. Puedes añadir varias acciones si tienes PA suficientes, y luego presiona <strong>ATACAR</strong>.
+            </div>
+          </div>
+
+          <!-- CONSOLA DE LOG EN VIVO -->
+          <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">
+              Registro de Impactos y Turnos en Vivo
+            </div>
+            <div class="combat-log" id="combat-log"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 3. PANTALLA: GARAJE Y TALLER -->
+    <!-- 4. PANTALLA: GARAJE Y TALLER -->
     <section id="screen-garage" class="screen">
       <div class="garage-grid">
-        <!-- IZQUIERDA: VISOR DEL ROBOT Y ESTADÍSTICAS TOTALES -->
         <div class="cyber-panel">
           <div class="panel-header">
             <div class="panel-title">🤖 Tu Robot Ensamblado</div>
-            <button class="cyber-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.App.switchScreen('combat')">⚔️ Ir a Pelear</button>
+            <button class="cyber-btn" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.App.switchScreen('lobby')">🚪 Volver al Lobby</button>
           </div>
           <div class="mecha-stage" id="garage-svg-stage" style="height: 310px;"></div>
           <div id="garage-total-stats" style="display: flex; flex-direction: column; gap: 10px;"></div>
         </div>
 
-        <!-- CENTRO: LAS 6 RANURAS EQUIPADAS -->
         <div class="cyber-panel">
           <div class="panel-header">
             <div class="panel-title">🔩 Tus 6 Piezas Equipadas</div>
@@ -1200,7 +1422,6 @@
           <div class="slot-list" id="garage-equipped-list"></div>
         </div>
 
-        <!-- DERECHA: ALMACÉN DE PIEZAS -->
         <div class="cyber-panel">
           <div class="panel-header">
             <div class="panel-title">📦 Almacén de Piezas (<span id="garage-inv-total">0</span>)</div>
@@ -1214,7 +1435,7 @@
       </div>
     </section>
 
-    <!-- 4. PANTALLA: TIENDA ORBITAL -->
+    <!-- 5. PANTALLA: TIENDA ORBITAL -->
     <section id="screen-shop" class="screen">
       <div class="cyber-panel">
         <div class="panel-header">
@@ -1228,7 +1449,7 @@
             <button class="cyber-btn amber" id="btn-refresh-shop" onclick="window.App.refreshShopStock(true)">
               🔄 Nuevas Piezas (₡ 40)
             </button>
-            <button class="cyber-btn" onclick="window.App.switchScreen('combat')">⚔️ Volver a la Torre</button>
+            <button class="cyber-btn" onclick="window.App.switchScreen('lobby')">🚪 Volver al Lobby</button>
           </div>
         </div>
         <div class="shop-grid" id="shop-items-grid"></div>
@@ -1278,7 +1499,7 @@
       <div style="background: var(--red-dim); border: 1px solid var(--red); padding: 14px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px;" id="defeat-penalty-box"></div>
       <div style="display: flex; justify-content: flex-end; gap: 12px;">
         <button class="cyber-btn" onclick="window.App.closeDefeatModal('garage')">🔧 Ir al Garaje</button>
-        <button class="cyber-btn red" onclick="window.App.closeDefeatModal('combat')">🔄 Reintentar Combate</button>
+        <button class="cyber-btn red" onclick="window.App.closeDefeatModal('lobby')">🚪 Volver al Lobby</button>
       </div>
     </div>
   </div>
@@ -1297,8 +1518,7 @@
     /**
      * ============================================================================
      * EXOBOTS // TORRE DE ÓRBITA — MOTOR MODULAR ES6+
-     * Arquitectura desacoplada: Eventos serializables en JSON (preparado para
-     * Firebase Realtime Database) y Renderizador UI/SVG interactivo.
+     * Con Lobby previo, registro al pie y planificador de acciones múltiples + ATACAR.
      * ============================================================================
      */
 
@@ -1319,9 +1539,6 @@
       BALANCED:  { key: 'BALANCED',  label: 'Equilibrado', color: '#ffb800', stroke: '#ffe082', glow: 'rgba(255,184,0,0.45)' }
     };
 
-    /**
-     * 1. BUS DE EVENTOS (Pub/Sub)
-     */
     class EventBus {
       constructor() {
         this.listeners = {};
@@ -1338,13 +1555,6 @@
       }
     }
 
-    /**
-     * 2. MECÁNICAS DE CONFORT Y ESTADÍSTICAS EFECTIVAS
-     * - +0.5% por cada 1% de Confort a todas las estadísticas base (hasta +50% al 100%).
-     * - passiveDef = 25% de la DEF efectiva.
-     * - Hito 50%: Desbloquea un bono pasivo menor mientras la pieza no esté destruida.
-     * - Hito 100%: Desbloquea la maestría especial de la pieza.
-     */
     class PartMechanics {
       static getComfortMultiplier(comfort = 0) {
         const clamped = Math.max(0, Math.min(100, Number(comfort) || 0));
@@ -1441,9 +1651,6 @@
       }
     }
 
-    /**
-     * 3. GENERADOR PROCEDURAL DE PIEZAS Y ENEMIGOS DE LA TORRE
-     */
     class PartGenerator {
       static CatalogNames = {
         head: {
@@ -1626,7 +1833,6 @@
       }
 
       static createStarterPresets() {
-        // 1. Chasis Asalto (Ofensivo)
         const assaultParts = {
           head:     PartGenerator.generatePart({ slot: 'head',     tier: 1, archetype: 'OFFENSIVE', comfort: 15, forcedActionType: 'ATTACK' }),
           torso:    PartGenerator.generatePart({ slot: 'torso',    tier: 1, archetype: 'OFFENSIVE', comfort: 15, forcedActionType: 'ATTACK' }),
@@ -1636,7 +1842,6 @@
           rightLeg: PartGenerator.generatePart({ slot: 'rightLeg', tier: 1, archetype: 'BALANCED',  comfort: 15, forcedActionType: 'GUARD' })
         };
 
-        // 2. Chasis Bastión (Defensivo)
         const bastionParts = {
           head:     PartGenerator.generatePart({ slot: 'head',     tier: 1, archetype: 'DEFENSIVE', comfort: 15, forcedActionType: 'SPECIAL' }),
           torso:    PartGenerator.generatePart({ slot: 'torso',    tier: 1, archetype: 'DEFENSIVE', comfort: 15, forcedActionType: 'GUARD' }),
@@ -1646,7 +1851,6 @@
           rightLeg: PartGenerator.generatePart({ slot: 'rightLeg', tier: 1, archetype: 'DEFENSIVE', comfort: 15, forcedActionType: 'ATTACK' })
         };
 
-        // 3. Chasis Versátil (Equilibrado)
         const versatileParts = {
           head:     PartGenerator.generatePart({ slot: 'head',     tier: 1, archetype: 'BALANCED',  comfort: 15, forcedActionType: 'SPECIAL' }),
           torso:    PartGenerator.generatePart({ slot: 'torso',    tier: 1, archetype: 'BALANCED',  comfort: 15, forcedActionType: 'SPECIAL' }),
@@ -1656,7 +1860,6 @@
           rightLeg: PartGenerator.generatePart({ slot: 'rightLeg', tier: 1, archetype: 'BALANCED',  comfort: 15, forcedActionType: 'GUARD' })
         };
 
-        // 4. Chasis Experimental (Aleatorio - Confort 0%)
         const experimentalParts = {};
         for (const slot of SLOTS_ORDER) {
           experimentalParts[slot] = PartGenerator.generatePart({
@@ -1779,9 +1982,6 @@
       }
     }
 
-    /**
-     * 4. SISTEMA DE COMBOS Y ADAPTADOR DE RED SERIALIZABLE
-     */
     class ComboSystem {
       static evaluateTurnChain(actionsInTurn) {
         if (!actionsInTurn || actionsInTurn.length < 2) return null;
@@ -1840,9 +2040,6 @@
       }
     }
 
-    /**
-     * 5. MOTOR DE COMBATE POR TURNOS (CombatEngine)
-     */
     class CombatEngine {
       constructor(eventBus) {
         this.eventBus = eventBus;
@@ -2029,7 +2226,6 @@
         });
         const activeCombo = ComboSystem.evaluateTurnChain(this.state.actionsThisTurn);
 
-        // 1. ACCIÓN DE GUARDIA (GUARD)
         if (part.actionType === 'GUARD') {
           part.guardCharges = (part.guardCharges || 0) + 1;
           this.logEvent('guard',
@@ -2047,7 +2243,6 @@
           return { ok: true, state: this.getSerializableState() };
         }
 
-        // 2. ACCIÓN ESPECIAL (SPECIAL)
         if (part.actionType === 'SPECIAL') {
           let masteryMsg = '';
           if (attackerEff.unlocked100) {
@@ -2107,7 +2302,6 @@
           return { ok: true, state: this.getSerializableState() };
         }
 
-        // 3. ACCIÓN DE ATAQUE (ATTACK)
         const validTargetSlot = (targetSlot && defender.parts[targetSlot] && !defender.parts[targetSlot].isDestroyed)
           ? targetSlot
           : 'torso';
@@ -2129,11 +2323,8 @@
         const activeGuards = this.getActiveGuards(opponentKey);
 
         if (activeGuards.length > 0) {
-          // INTERCEPCIÓN POR GUARDIA ACTIVA
           const guardPart = activeGuards[0];
           const guardEff = PartMechanics.computeEffectiveStats(guardPart, defender.buffs);
-
-          // Daño = Math.max(1, Ataque_Efectivo_Atacante - Defensa_Efectiva_PiezaGuardia)
           const damage = Math.max(1, effectiveAtk - guardEff.def);
 
           guardPart.guardCharges = Math.max(0, guardPart.guardCharges - 1);
@@ -2170,10 +2361,7 @@
             destroyed: destroyedGuard
           });
         } else {
-          // IMPACTO DIRECTO (Aplica Defensa Pasiva = 25% de DEF)
           const targetEff = PartMechanics.computeEffectiveStats(intendedTarget, defender.buffs);
-
-          // Daño = Math.max(1, Ataque_Efectivo_Atacante - PassiveDef_Efectiva_Objetivo)
           const damage = Math.max(1, effectiveAtk - targetEff.passiveDef);
           const destroyedTarget = this.applyDamageToPart(defender, intendedTarget, damage);
 
@@ -2370,9 +2558,6 @@
       }
     }
 
-    /**
-     * 6. ESTADO GENERAL Y PERSISTENCIA (GameState)
-     */
     class GameState {
       static STORAGE_KEY = 'exobots_orbital_save_v1';
 
@@ -2621,9 +2806,6 @@
       }
     }
 
-    /**
-     * 7. RENDERIZADOR VISUAL SVG DE LOS ROBOTS (MechaSVGRenderer)
-     */
     class MechaSVGRenderer {
       static renderMechaSVG(partsMap, options = {}) {
         const {
@@ -2788,9 +2970,6 @@
       }
     }
 
-    /**
-     * 8. CONTROLADOR DE INTERFAZ Y FLUJO DE JUEGO (AppController)
-     */
     class AppController {
       constructor() {
         this.eventBus = new EventBus();
@@ -2804,6 +2983,10 @@
         this.garageSlotFilter = 'ALL';
         this.activeEnemyData = null;
         this.aiTurnTimer = null;
+
+        // Cola de acciones planificadas para el turno del jugador
+        this.plannedActions = [];
+        this.isExecutingQueue = false;
 
         this.bindEngineEvents();
       }
@@ -2819,8 +3002,7 @@
         if (hasSave) {
           this.showMainNavigation(true);
           this.updateTopHud();
-          this.switchScreen('combat');
-          this.startFloorStageCombat();
+          this.switchScreen('lobby');
         } else {
           this.showMainNavigation(false);
           this.renderStarterSelection();
@@ -2848,13 +3030,18 @@
 
         this.eventBus.on('TURN_STARTED', (ev) => {
           this.selectedPlayerSlot = null;
+          this.plannedActions = [];
+          this.isExecutingQueue = false;
           this.renderCombatView();
+
           if (ev.actor === 'enemy' && !this.combatEngine.state.isFinished) {
             this.runEnemyAITurn();
           }
         });
 
         this.eventBus.on('COMBAT_ENDED', (ev) => {
+          this.isExecutingQueue = false;
+          this.plannedActions = [];
           if (this.aiTurnTimer) {
             clearTimeout(this.aiTurnTimer);
             this.aiTurnTimer = null;
@@ -2877,6 +3064,7 @@
       showMainNavigation(visible) {
         const display = visible ? 'inline-flex' : 'none';
         document.getElementById('hud-telemetry-bar').style.display = visible ? 'flex' : 'none';
+        document.getElementById('nav-btn-lobby').style.display = display;
         document.getElementById('nav-btn-combat').style.display = display;
         document.getElementById('nav-btn-garage').style.display = display;
         document.getElementById('nav-btn-shop').style.display = display;
@@ -2888,14 +3076,16 @@
         const target = document.getElementById(`screen-${screenName}`);
         if (target) target.classList.add('active');
 
-        ['combat', 'garage', 'shop'].forEach(tab => {
+        ['lobby', 'combat', 'garage', 'shop'].forEach(tab => {
           const btn = document.getElementById(`nav-btn-${tab}`);
           if (btn) btn.classList.toggle('active', tab === screenName);
         });
 
-        if (screenName === 'combat') {
+        if (screenName === 'lobby') {
+          this.renderLobbyView();
+        } else if (screenName === 'combat') {
           if (!this.combatEngine.state || this.combatEngine.state.isFinished) {
-            this.startFloorStageCombat();
+            this.startBattleFromLobby();
           } else {
             this.renderCombatView();
           }
@@ -2996,8 +3186,7 @@
         this.gameState.initNewGameWithStarter(chosen);
         this.showMainNavigation(true);
         this.updateTopHud();
-        this.switchScreen('combat');
-        this.startFloorStageCombat();
+        this.switchScreen('lobby');
       }
 
       changeFloor(floorNumber) {
@@ -3007,41 +3196,34 @@
         }
         this.gameState.setFloor(floorNumber);
         this.updateTopHud();
-        if (this.currentScreen === 'combat') {
-          this.startFloorStageCombat();
+        this.activeEnemyData = null;
+        if (this.currentScreen === 'lobby') {
+          this.renderLobbyView();
         } else if (this.currentScreen === 'shop') {
           this.renderShopView();
         }
       }
 
-      startFloorStageCombat() {
+      /**
+       * PANTALLA: LOBBY PREVIO AL COMBATE
+       */
+      renderLobbyView() {
         const data = this.gameState.data;
         if (!data) return;
 
-        if (this.aiTurnTimer) {
-          clearTimeout(this.aiTurnTimer);
-          this.aiTurnTimer = null;
+        // Generar o recuperar datos del enemigo del piso y etapa actual
+        if (!this.activeEnemyData || this.activeEnemyData.floor !== data.currentFloor || this.activeEnemyData.stage !== data.currentStage) {
+          this.activeEnemyData = PartGenerator.generateEnemy(data.currentFloor, data.currentStage);
         }
 
-        this.selectedPlayerSlot = null;
-        this.activeEnemyData = PartGenerator.generateEnemy(data.currentFloor, data.currentStage);
+        const enemy = this.activeEnemyData;
+        const isBoss = enemy.isBoss;
 
-        document.getElementById('combat-log').innerHTML = '';
-        this.combatEngine.initCombat(data.equipped, this.activeEnemyData);
-        this.renderTowerHeader();
-        this.renderCombatView();
+        document.getElementById('lobby-floor-title').textContent = `TORRE DE ÓRBITA — PISO ${data.currentFloor}`;
+        document.getElementById('lobby-tier-badge').textContent = `[Tier ${data.currentFloor} • Récord: Piso ${data.maxFloorUnlocked}]`;
 
-        if (this.combatEngine.state.activeActor === 'enemy') {
-          this.runEnemyAITurn();
-        }
-      }
-
-      renderTowerHeader() {
-        const data = this.gameState.data;
-        document.getElementById('tower-floor-title').textContent = `TORRE DE ÓRBITA — PISO ${data.currentFloor}`;
-        document.getElementById('tower-tier-badge').textContent = `[Tier ${data.currentFloor} • Récord: Piso ${data.maxFloorUnlocked}]`;
-
-        const track = document.getElementById('tower-stage-track');
+        // Tracker de etapas en el Lobby
+        const track = document.getElementById('lobby-stage-track');
         track.innerHTML = '';
         for (let s = 1; s <= 5; s++) {
           const node = document.createElement('div');
@@ -3055,17 +3237,97 @@
             : `${s < data.currentStage ? '✔' : '⚔️'} Combate ${s}/5`;
           track.appendChild(node);
         }
+
+        // 1. Robot del jugador en el Lobby
+        document.getElementById('lobby-player-svg-stage').innerHTML = MechaSVGRenderer.renderMechaSVG(data.equipped, {
+          actor: 'player',
+          interactive: false
+        });
+
+        let totalHp = 0, totalAtk = 0, totalDef = 0, totalSpd = 0;
+        for (const s of SLOTS_ORDER) {
+          const eff = PartMechanics.computeEffectiveStats(data.equipped[s]);
+          totalHp += eff.maxHp;
+          totalAtk += eff.atk;
+          totalDef += eff.def;
+          totalSpd += eff.spd;
+        }
+
+        document.getElementById('lobby-player-stats-box').innerHTML = `
+          <div>Chasis: <strong style="color:#ffffff">${data.chassisName}</strong></div>
+          <div>💠 Vida Torso: <strong style="color:var(--cyan)">${PartMechanics.computeEffectiveStats(data.equipped.torso).maxHp} HP</strong></div>
+          <div>❤️ Vida Total: <strong>${totalHp} HP</strong> • ⚔️ Ataque: <strong>${totalAtk}</strong></div>
+          <div>🛡️ Defensa: <strong>${totalDef}</strong> • ⚡ Velocidad: <strong style="color:var(--amber)">${totalSpd} SPD</strong></div>
+        `;
+
+        // 2. Centro: Datos del Enfrentamiento
+        document.getElementById('lobby-vs-title').textContent = isBoss
+          ? `💀 JEFE DEL PISO ${data.currentFloor}`
+          : `COMBATE ${data.currentStage} DE 5`;
+
+        document.getElementById('lobby-vs-desc').innerHTML = isBoss
+          ? `¡Combate decisivo! Vencer a <strong>${enemy.name}</strong> desbloqueará el Piso ${data.currentFloor + 1} y te otorgará piezas de alto calibre.`
+          : `Rival hostil detectado en el sector. Supera esta batalla para avanzar hacia el Guardián de la Escalera.`;
+
+        // 3. Enemigo en el Lobby
+        document.getElementById('lobby-enemy-badge').textContent = isBoss ? '💀 JEFE' : 'HOSTIL';
+        document.getElementById('lobby-enemy-svg-stage').innerHTML = MechaSVGRenderer.renderMechaSVG(enemy.parts, {
+          actor: 'enemy',
+          interactive: false
+        });
+
+        let enemyHp = 0, enemyAtk = 0, enemySpd = 0;
+        for (const s of SLOTS_ORDER) {
+          const eff = PartMechanics.computeEffectiveStats(enemy.parts[s]);
+          enemyHp += eff.maxHp;
+          enemyAtk += eff.atk;
+          enemySpd += eff.spd;
+        }
+
+        document.getElementById('lobby-enemy-stats-box').innerHTML = `
+          <div style="font-weight:700; color:${isBoss ? 'var(--red)' : '#ffffff'};">${enemy.name}</div>
+          <div>💠 Torso Enemigo: <strong style="color:var(--red)">${PartMechanics.computeEffectiveStats(enemy.parts.torso).maxHp} HP</strong></div>
+          <div>❤️ Vida Estimada: <strong>${enemyHp} HP</strong> • ⚔️ Ataque: <strong>${enemyAtk}</strong></div>
+          <div>⚡ Velocidad: <strong style="color:var(--amber)">${enemySpd} SPD</strong> • Nivel: <strong>Tier ${enemy.floor}</strong></div>
+        `;
       }
 
+      startBattleFromLobby() {
+        const data = this.gameState.data;
+        if (!data) return;
+
+        if (this.aiTurnTimer) {
+          clearTimeout(this.aiTurnTimer);
+          this.aiTurnTimer = null;
+        }
+
+        this.selectedPlayerSlot = null;
+        this.plannedActions = [];
+        this.isExecutingQueue = false;
+
+        if (!this.activeEnemyData || this.activeEnemyData.floor !== data.currentFloor || this.activeEnemyData.stage !== data.currentStage) {
+          this.activeEnemyData = PartGenerator.generateEnemy(data.currentFloor, data.currentStage);
+        }
+
+        document.getElementById('combat-log').innerHTML = '';
+        this.combatEngine.initCombat(data.equipped, this.activeEnemyData);
+        this.switchScreen('combat');
+
+        if (this.combatEngine.state.activeActor === 'enemy') {
+          this.runEnemyAITurn();
+        }
+      }
+
+      /**
+       * PANTALLA: ARENA DE COMBATE
+       */
       renderCombatView() {
         const cState = this.combatEngine.state;
         if (!cState) return;
 
-        this.renderTowerHeader();
-
         const player = cState.combatants.player;
         const enemy = cState.combatants.enemy;
-        const isPlayerTurn = cState.activeActor === 'player' && !cState.isFinished;
+        const isPlayerTurn = cState.activeActor === 'player' && !cState.isFinished && !this.isExecutingQueue;
         const selectedPart = this.selectedPlayerSlot ? player.parts[this.selectedPlayerSlot] : null;
         const isTargetingEnemy = Boolean(isPlayerTurn && selectedPart && (selectedPart.actionType === 'ATTACK' || selectedPart.actionType === 'SPECIAL'));
 
@@ -3079,6 +3341,9 @@
         if (cState.isFinished) {
           turnPill.textContent = cState.winner === 'player' ? '🏆 ¡VICTORIA!' : '⚠️ DERROTA';
           turnPill.style.color = cState.winner === 'player' ? 'var(--green)' : 'var(--red)';
+        } else if (this.isExecutingQueue) {
+          turnPill.textContent = '⚔️ EJECUTANDO ATAQUES...';
+          turnPill.style.color = 'var(--amber)';
         } else if (isPlayerTurn) {
           turnPill.textContent = '⚡ TU TURNO';
           turnPill.style.color = 'var(--cyan)';
@@ -3087,39 +3352,18 @@
           turnPill.style.color = 'var(--red)';
         }
 
-        const banner = document.getElementById('combat-action-banner');
-        if (isTargetingEnemy) {
-          banner.className = 'tactical-banner targeting';
-          banner.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-              <span>🎯 <strong>ARMA LISTA:</strong> ${selectedPart.name} (${selectedPart.apCost} PA). <strong>Haz clic en qué pieza del enemigo quieres golpear</strong> (en su robot o en su lista).</span>
-              <button class="cyber-btn red" style="padding:5px 12px; font-size:0.78rem;" onclick="window.App.cancelTargeting()">✖ Cancelar</button>
-            </div>
-          `;
-        } else if (isPlayerTurn) {
-          banner.className = 'tactical-banner';
-          banner.innerHTML = `
-            ⚡ <strong>Tu Turno (${player.ap}/${player.maxAp} PA disponibles):</strong><br>
-            • Pulsa un arma para <strong>Atacar</strong> y luego elige la pieza enemiga a la que disparar.<br>
-            • Pulsa un escudo para activar <strong>Guardia</strong> (interceptará el próximo ataque enemigo).<br>
-            • Si te sobran PA, puedes realizar más ataques o pulsar <em>Terminar Turno</em> para guardarlos.
-          `;
-        } else {
-          banner.className = 'tactical-banner';
-          banner.innerHTML = `🤖 <strong>El enemigo está ejecutando sus acciones...</strong> Observa la consola de combate.`;
-        }
-
-        document.getElementById('btn-end-turn').disabled = !isPlayerTurn;
-
-        this.renderCombatantHud('player', player, pSpd, selectedPart ? selectedPart.apCost : 0);
+        // Renderizar Hud de robots
+        const plannedCost = this.getPlannedApCost();
+        this.renderCombatantHud('player', player, pSpd, plannedCost);
         this.renderCombatantHud('enemy', enemy, eSpd, 0);
 
+        // Renderizar SVGs
         const playerStage = document.getElementById('player-svg-stage');
         playerStage.innerHTML = MechaSVGRenderer.renderMechaSVG(player.parts, {
           actor: 'player',
           selectedSlot: this.selectedPlayerSlot,
           targetingMode: false,
-          interactive: true
+          interactive: !this.isExecutingQueue
         });
 
         const enemyStage = document.getElementById('enemy-svg-stage');
@@ -3128,20 +3372,75 @@
           actor: 'enemy',
           selectedSlot: null,
           targetingMode: isTargetingEnemy,
-          interactive: true
+          interactive: !this.isExecutingQueue
         });
 
         const enemyGuards = this.combatEngine.getActiveGuards('enemy');
         const guardSummaryEl = document.getElementById('enemy-guard-summary');
         if (enemyGuards.length > 0) {
           const totalCharges = enemyGuards.reduce((acc, p) => acc + p.guardCharges, 0);
-          guardSummaryEl.innerHTML = `<span style="color:var(--cyan); font-weight:700;">🛡️ Guardia Activa (x${totalCharges} — Interceptará ataques)</span>`;
+          guardSummaryEl.innerHTML = `<span style="color:var(--cyan); font-weight:700;">🛡️ Guardia Activa (x${totalCharges})</span>`;
         } else {
-          guardSummaryEl.textContent = 'Sin Guardia (Recibe daño con Defensa Pasiva)';
+          guardSummaryEl.textContent = 'Sin Guardia';
         }
 
         this.renderPartsDeck('player', player, isPlayerTurn, false);
         this.renderPartsDeck('enemy', enemy, isPlayerTurn, isTargetingEnemy);
+
+        // Renderizar Barra de Planificación de Turno
+        this.renderActionPlanner();
+      }
+
+      getPlannedApCost() {
+        return this.plannedActions.reduce((sum, a) => sum + a.apCost, 0);
+      }
+
+      getAvailableAp() {
+        const cState = this.combatEngine.state;
+        if (!cState) return 0;
+        return Math.max(0, cState.combatants.player.ap - this.getPlannedApCost());
+      }
+
+      renderActionPlanner() {
+        const cState = this.combatEngine.state;
+        if (!cState) return;
+
+        const isPlayerTurn = cState.activeActor === 'player' && !cState.isFinished && !this.isExecutingQueue;
+        const availableAp = this.getAvailableAp();
+        const totalAp = cState.combatants.player.ap;
+
+        document.getElementById('planner-ap-summary').innerHTML = `
+          PA Restantes para planificar: <strong style="color:${availableAp > 0 ? 'var(--amber)' : '#ffffff'}">${availableAp}</strong> / ${cState.combatants.player.maxAp} PA (Turno: ${totalAp} PA)
+        `;
+
+        const queueWrap = document.getElementById('queue-items-wrap');
+        queueWrap.innerHTML = '';
+
+        if (this.plannedActions.length === 0) {
+          queueWrap.innerHTML = `
+            <span style="color:var(--text-muted); font-size:0.86rem;">
+              ${isPlayerTurn ? 'Haz clic en tus piezas para añadir acciones a tu turno (puedes planificar varias si tienes PA).' : 'Esperando tu turno para planificar acciones...'}
+            </span>
+          `;
+        } else {
+          this.plannedActions.forEach((item, idx) => {
+            const pill = document.createElement('div');
+            pill.className = 'queue-pill';
+            pill.innerHTML = `
+              <span>${idx + 1}. <strong>${item.partName}</strong> ➔ ${item.actionDesc} <small style="color:var(--amber)">(${item.apCost} PA)</small></span>
+              <button class="queue-remove-btn" onclick="window.App.removePlannedAction(${idx})" ${this.isExecutingQueue ? 'disabled' : ''} title="Quitar acción">✕</button>
+            `;
+            queueWrap.appendChild(pill);
+          });
+        }
+
+        const btnAttack = document.getElementById('btn-execute-attack');
+        const btnClear = document.getElementById('btn-clear-queue');
+        const btnEndTurn = document.getElementById('btn-end-turn-direct');
+
+        btnAttack.disabled = !isPlayerTurn || this.plannedActions.length === 0 || this.isExecutingQueue;
+        btnClear.disabled = !isPlayerTurn || this.plannedActions.length === 0 || this.isExecutingQueue;
+        btnEndTurn.disabled = !isPlayerTurn || this.isExecutingQueue;
       }
 
       renderCombatantHud(prefix, combatant, totalSpd, previewApCost = 0) {
@@ -3158,15 +3457,16 @@
         torsoBar.style.width = `${torsoPct}%`;
         torsoBar.classList.toggle('low', torsoPct <= 35);
 
-        document.getElementById(`${prefix}-ap-text`).textContent = `${combatant.ap} / ${combatant.maxAp} PA`;
+        const currentAp = combatant.ap;
+        document.getElementById(`${prefix}-ap-text`).textContent = `${currentAp} / ${combatant.maxAp} PA`;
         const pipsContainer = document.getElementById(`${prefix}-ap-pips`);
         pipsContainer.innerHTML = '';
         for (let i = 1; i <= combatant.maxAp; i++) {
           const pip = document.createElement('div');
           let cls = 'ap-pip';
-          if (i <= combatant.ap) {
+          if (i <= currentAp) {
             cls += ' filled';
-            if (previewApCost > 0 && i > (combatant.ap - previewApCost)) {
+            if (previewApCost > 0 && i > (currentAp - previewApCost)) {
               cls += ' preview-cost';
             }
           }
@@ -3178,13 +3478,14 @@
       renderPartsDeck(actorKey, combatant, isPlayerTurn, isTargetingEnemy) {
         const container = document.getElementById(`${actorKey}-parts-deck`);
         container.innerHTML = '';
+        const availableAp = this.getAvailableAp();
 
         for (const slot of SLOTS_ORDER) {
           const part = combatant.parts[slot];
           const eff = PartMechanics.computeEffectiveStats(part, combatant.buffs);
           const hpPct = Math.max(0, Math.min(100, Math.round((part.currentHp / eff.maxHp) * 100)));
           const isDestroyed = Boolean(part.isDestroyed);
-          const notEnoughAp = actorKey === 'player' && combatant.ap < part.apCost;
+          const notEnoughAp = actorKey === 'player' && availableAp < part.apCost;
 
           let cls = 'part-card';
           if (isDestroyed) cls += ' destroyed';
@@ -3227,6 +3528,9 @@
         }
       }
 
+      /**
+       * INTERACCIÓN CON PIEZAS: PLANIFICAR ACCIONES EN LA COLA
+       */
       onMechaPartClicked(actorKey, slot) {
         if (this.currentScreen === 'garage') {
           this.garageSlotFilter = slot;
@@ -3235,11 +3539,13 @@
         }
 
         const cState = this.combatEngine.state;
-        if (!cState || cState.isFinished || cState.activeActor !== 'player') return;
+        if (!cState || cState.isFinished || cState.activeActor !== 'player' || this.isExecutingQueue) return;
 
         const player = cState.combatants.player;
         const enemy = cState.combatants.enemy;
+        const availableAp = this.getAvailableAp();
 
+        // 1. Clic en pieza aliada (Jugador)
         if (actorKey === 'player') {
           const part = player.parts[slot];
           if (!part || part.isDestroyed) {
@@ -3247,34 +3553,43 @@
             return;
           }
 
-          if (player.ap < part.apCost) {
+          if (availableAp < part.apCost) {
             this.showInspector(actorKey, slot);
-            this.spawnFloatingText('player', `Faltan PA (${part.apCost} PA)`, '#ffb800');
+            this.spawnFloatingText('player', `Faltan PA (${part.apCost} PA necesarios)`, '#ffb800');
             return;
           }
 
+          // Pieza de GUARDIA: añadir a la cola
           if (part.actionType === 'GUARD') {
             this.selectedPlayerSlot = null;
-            this.networkTransport.dispatchSerializableAction({
-              type: 'USE_PART',
-              actor: 'player',
+            this.plannedActions.push({
               partSlot: slot,
-              targetSlot: null
+              partName: part.name,
+              actionType: 'GUARD',
+              targetSlot: null,
+              apCost: part.apCost,
+              actionDesc: '🛡️ Levantar Guardia'
             });
+            this.renderCombatView();
             return;
           }
 
+          // Pieza de SOPORTE/CURACIÓN: añadir a la cola
           if (part.actionType === 'SPECIAL' && (part.specialEffect === 'NANOREPAIR' || part.specialEffect === 'REPAIR_CORE')) {
             this.selectedPlayerSlot = null;
-            this.networkTransport.dispatchSerializableAction({
-              type: 'USE_PART',
-              actor: 'player',
+            this.plannedActions.push({
               partSlot: slot,
-              targetSlot: 'torso'
+              partName: part.name,
+              actionType: 'SPECIAL',
+              targetSlot: 'torso',
+              apCost: part.apCost,
+              actionDesc: '✨ Reparar Torso'
             });
+            this.renderCombatView();
             return;
           }
 
+          // Pieza de ATAQUE o ESPECIAL ofensiva: activar selección de objetivo enemigo
           if (this.selectedPlayerSlot === slot) {
             this.selectedPlayerSlot = null;
           } else {
@@ -3285,6 +3600,7 @@
           return;
         }
 
+        // 2. Clic en pieza enemiga (Para objetivo del ataque)
         if (actorKey === 'enemy') {
           const targetPart = enemy.parts[slot];
           if (!targetPart || targetPart.isDestroyed) {
@@ -3292,10 +3608,11 @@
             return;
           }
 
+          // Si el jugador no tenía arma seleccionada, buscar automáticamente un arma de ataque con PA disponibles
           if (!this.selectedPlayerSlot) {
             const autoAttackPart = SLOTS_ORDER
               .map(s => player.parts[s])
-              .find(p => p && !p.isDestroyed && p.actionType === 'ATTACK' && p.apCost <= player.ap);
+              .find(p => p && !p.isDestroyed && p.actionType === 'ATTACK' && p.apCost <= availableAp);
 
             if (autoAttackPart) {
               this.selectedPlayerSlot = autoAttackPart.slot;
@@ -3305,25 +3622,106 @@
             }
           }
 
-          const attackingSlot = this.selectedPlayerSlot;
-          this.selectedPlayerSlot = null;
-          this.networkTransport.dispatchSerializableAction({
-            type: 'USE_PART',
-            actor: 'player',
-            partSlot: attackingSlot,
-            targetSlot: slot
+          const attackingPart = player.parts[this.selectedPlayerSlot];
+          if (availableAp < attackingPart.apCost) {
+            this.spawnFloatingText('player', `Faltan PA (${attackingPart.apCost} PA)`, '#ffb800');
+            this.selectedPlayerSlot = null;
+            this.renderCombatView();
+            return;
+          }
+
+          this.plannedActions.push({
+            partSlot: this.selectedPlayerSlot,
+            partName: attackingPart.name,
+            actionType: attackingPart.actionType,
+            targetSlot: slot,
+            apCost: attackingPart.apCost,
+            actionDesc: `🎯 Disparo a ${SLOT_META[slot].short}`
           });
+
+          this.selectedPlayerSlot = null;
+          this.renderCombatView();
         }
       }
 
-      cancelTargeting() {
+      removePlannedAction(index) {
+        if (this.isExecutingQueue) return;
+        this.plannedActions.splice(index, 1);
+        this.renderCombatView();
+      }
+
+      clearPlannedQueue() {
+        if (this.isExecutingQueue) return;
+        this.plannedActions = [];
         this.selectedPlayerSlot = null;
         this.renderCombatView();
       }
 
+      /**
+       * BOTÓN "⚔️ ATACAR": EJECUTA LA COLA DE ACCIONES EN SECUENCIA
+       */
+      executePlannedTurn() {
+        if (this.isExecutingQueue || this.plannedActions.length === 0) return;
+
+        this.isExecutingQueue = true;
+        this.selectedPlayerSlot = null;
+        const actionsToRun = [...this.plannedActions];
+        this.plannedActions = [];
+        this.renderCombatView();
+
+        let stepIndex = 0;
+
+        const runNextStep = () => {
+          const cState = this.combatEngine.state;
+          if (!cState || cState.isFinished) {
+            this.isExecutingQueue = false;
+            return;
+          }
+
+          if (stepIndex >= actionsToRun.length) {
+            this.isExecutingQueue = false;
+            this.renderCombatView();
+
+            // Si al jugador ya no le quedan PA para ninguna acción, o termina el turno
+            const availableAp = cState.combatants.player.ap;
+            const canDoAnything = SLOTS_ORDER.some(s => {
+              const p = cState.combatants.player.parts[s];
+              return p && !p.isDestroyed && p.apCost <= availableAp;
+            });
+
+            if (!canDoAnything || availableAp === 0) {
+              setTimeout(() => {
+                this.endPlayerTurn();
+              }, 400);
+            }
+            return;
+          }
+
+          const actionItem = actionsToRun[stepIndex];
+          stepIndex++;
+
+          this.networkTransport.dispatchSerializableAction({
+            type: 'USE_PART',
+            actor: 'player',
+            partSlot: actionItem.partSlot,
+            targetSlot: actionItem.targetSlot
+          });
+
+          if (!this.combatEngine.state.isFinished) {
+            setTimeout(runNextStep, 550);
+          } else {
+            this.isExecutingQueue = false;
+          }
+        };
+
+        runNextStep();
+      }
+
       endPlayerTurn() {
         const cState = this.combatEngine.state;
-        if (!cState || cState.isFinished || cState.activeActor !== 'player') return;
+        if (!cState || cState.isFinished || cState.activeActor !== 'player' || this.isExecutingQueue) return;
+
+        this.plannedActions = [];
         this.selectedPlayerSlot = null;
         this.networkTransport.dispatchSerializableAction({
           type: 'END_TURN',
@@ -3493,7 +3891,8 @@
         this.gameState.stealEnemyPart(enemyPart, equipImmediately);
         document.getElementById('modal-loot').classList.remove('active');
         this.updateTopHud();
-        this.startFloorStageCombat();
+        this.activeEnemyData = null;
+        this.switchScreen('lobby');
       }
 
       openDefeatModal() {
@@ -3514,7 +3913,8 @@
       closeDefeatModal(targetScreen) {
         document.getElementById('modal-defeat').classList.remove('active');
         this.updateTopHud();
-        this.switchScreen(targetScreen || 'combat');
+        this.activeEnemyData = null;
+        this.switchScreen(targetScreen || 'lobby');
       }
 
       renderGarageView() {
@@ -3789,6 +4189,8 @@
         if (this.aiTurnTimer) clearTimeout(this.aiTurnTimer);
         this.gameState.resetStorage();
         this.combatEngine.state = null;
+        this.activeEnemyData = null;
+        this.plannedActions = [];
         this.showMainNavigation(false);
         this.renderStarterSelection();
         this.switchScreen('starter');
