@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kami - Centro de Juegos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="logo">Kami<span>.dev</span></div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="switchTab('inicio')">🏠 Inicio</button>
+      <button class="nav-btn" onclick="switchTab('juegos')">🎮 Juegos</button>
+    </div>
+  </nav>
+
+  <!-- Contenedor principal -->
+  <main class="container">
+    <!-- PESTAÑA: INICIO -->
+    <section id="tab-inicio" class="tab-content active">
+      <div class="hero-card">
+        <div class="badge">Sincronización en vivo</div>
+        <h1>¡Bienvenido a Kami!</h1>
+        <p>Tu portal personal y centro de proyectos web. Cada cambio realizado se despliega en tiempo real en GitHub Pages para que puedas probarlo en cualquier dispositivo.</p>
+        
+        <div class="quick-stats">
+          <div class="stat-box">
+            <span class="stat-number" id="game-count">2</span>
+            <span class="stat-label">Juegos listados</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-indicator"></span>
+            <span class="stat-label">GitHub Pages Activo</span>
+          </div>
+        </div>
+
+        <button class="cta-btn" onclick="switchTab('juegos')">Explorar Juegos 🎮</button>
+      </div>
+    </section>
+
+    <!-- PESTAÑA: JUEGOS -->
+    <section id="tab-juegos" class="tab-content">
+      <div class="section-header">
+        <h2>🎮 Zona de Juegos HTML</h2>
+        <p>Juegos desarrollados en HTML5, CSS y JavaScript listos para jugar desde cualquier pantalla.</p>
+      </div>
+
+      <div class="games-grid">
+        <!-- Exobots: Torre Táctica -->
+        <article class="game-card">
+          <div class="game-cover cover-1">
+            🤖
+          </div>
+          <div class="game-info">
+            <span class="game-tag">RPG Táctico / Mecha</span>
+            <h3>EXOBOTS: Torre de Órbita</h3>
+            <p>RPG táctico inspirado en Medabots. Ensambla tu exoesqueleto de 6 piezas, domina el sistema de PA y Confort, roba piezas y conquista la Torre Infinita.</p>
+            <a href="index.html" class="play-btn">Jugar Exobots ⚡</a>
+          </div>
+        </article>
+
+        <!-- Criptas de Velmor -->
+        <article class="game-card">
+          <div class="game-cover cover-2">
+            🗝️
+          </div>
+          <div class="game-info">
+            <span class="game-tag">Mazmorras / Rol</span>
+            <h3>Criptas de Velmor</h3>
+            <p>Juego de mazmorras por turnos (1 a 4 jugadores). Crea una sala cooperativa o explora en solitario las criptas subterráneas.</p>
+            <a href="criptas/index.html" class="play-btn">Jugar Criptas ⚔️</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabId).classList.add('active');
+      const clickedBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.textContent.toLowerCase().includes(tabId));
+      if (clickedBtn) clickedBtn.classList.add('active');
+    }
+  </script>
+</body>
+</html>
