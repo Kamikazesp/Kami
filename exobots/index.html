@@ -1384,10 +1384,9 @@
           <!-- DETALLES DE PIEZA (INSPECTOR) -->
           <div class="inspector-box" id="combat-part-inspector">
             <div style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">
-              💡 <strong>Instrucciones de Combate:</strong><br>
-              1. Haz clic en una de tus armas de <strong>Ataque</strong> y luego elige qué pieza enemiga quieres golpear.<br>
-              2. O haz clic en un escudo para activar <strong>Guardia</strong> (bloqueará el próximo impacto).<br>
-              3. Puedes añadir varias acciones si tienes PA suficientes, y luego presiona <strong>ATACAR</strong>.
+              💡 <strong>Estrategia y Dinámica de Combate:</strong><br>
+              🛡️ <strong>Red de Blindaje Compuesto:</strong> El Torso absorbe un +12% de la defensa de cada extremidad intacta. Disparar al Torso cuando las extremidades están sanas es poco efectivo; ¡destruye brazos y piernas para desarmar su blindaje!<br>
+              ⚔️ <strong>Planificador de Turno:</strong> Elige tu arma y la pieza enemiga objetivo. O activa escudos de <strong>Guardia</strong>. Puedes encadenar varias acciones antes de pulsar <strong>ATACAR</strong>.
             </div>
           </div>
 
@@ -1594,6 +1593,32 @@
           unlocked50: part.comfort >= 50,
           unlocked100: part.comfort >= 100
         };
+      }
+
+      static getTorsoCompositePassiveDef(combatant) {
+        if (!combatant || !combatant.parts || !combatant.parts.torso) {
+          return { total: 1, base: 1, limbBonus: 0, contributors: [] };
+        }
+        const buffs = combatant.buffs || { atkMult: 1, defMult: 1, spdBonus: 0 };
+        const torsoEff = PartMechanics.computeEffectiveStats(combatant.parts.torso, buffs);
+        const base = torsoEff.passiveDef;
+
+        const contributors = [];
+        let limbBonus = 0;
+        const outerSlots = ['head', 'leftArm', 'rightArm', 'leftLeg', 'rightLeg'];
+
+        for (const slot of outerSlots) {
+          const part = combatant.parts[slot];
+          if (part && !part.isDestroyed) {
+            const eff = PartMechanics.computeEffectiveStats(part, buffs);
+            const bonus = Math.max(1, Math.round(eff.def * 0.12));
+            limbBonus += bonus;
+            contributors.push({ slot, name: part.name, bonus, def: eff.def });
+          }
+        }
+
+        const total = base + limbBonus;
+        return { total, base, limbBonus, contributors };
       }
 
       static getPassive50Description(part) {
@@ -2280,13 +2305,32 @@
               : 'torso';
             const targetPart = defender.parts[chosenTargetSlot];
             const targetEff = PartMechanics.computeEffectiveStats(targetPart, defender.buffs);
-            const pulseDmg = Math.max(1, Math.round(attackerEff.atk * 0.78) - targetEff.passiveDef);
 
-            this.applyDamageToPart(defender, targetPart, pulseDmg);
+            let pulseDef = targetEff.passiveDef;
+            let pulseDefDesc = `Defensa Pasiva ${pulseDef}`;
+            if (chosenTargetSlot === 'torso') {
+              const comp = PartMechanics.getTorsoCompositePassiveDef(defender);
+              pulseDef = comp.total;
+              pulseDefDesc = `Def. Compuesta Torso ${pulseDef} (Base ${comp.base} + ${comp.limbBonus} Red)`;
+            }
+
+            const pulseDmg = Math.max(1, Math.round(attackerEff.atk * 0.78) - pulseDef);
+            const destroyedPulse = this.applyDamageToPart(defender, targetPart, pulseDmg);
 
             this.logEvent('special',
-              `⚡ ${attacker.name} lanza SOBRECARGA con ${part.name} (-${part.apCost} PA): +22% Ataque al chasis y pulso de ${pulseDmg} daño a ${targetPart.name} (${SLOT_META[chosenTargetSlot].short}).${masteryMsg}`
+              `⚡ ${attacker.name} lanza SOBRECARGA con ${part.name} (-${part.apCost} PA): +22% Ataque al chasis y pulso de ${pulseDmg} daño a ${targetPart.name} (${SLOT_META[chosenTargetSlot].short}) [Ataque ${Math.round(attackerEff.atk * 0.78)} - ${pulseDefDesc}].${masteryMsg}`
             );
+
+            if (destroyedPulse && chosenTargetSlot !== 'torso') {
+              const lostLimbDef = Math.max(1, Math.round(targetEff.def * 0.12));
+              const newComp = PartMechanics.getTorsoCompositePassiveDef(defender);
+              this.logEvent('destroy',
+                `💥 ¡Pieza destruida! ${targetPart.name} (${SLOT_META[chosenTargetSlot].short}) de ${defender.name} ha quedado fuera de combate.`
+              );
+              this.logEvent('system',
+                `⚠️ ¡Red de blindaje debilitada! El Torso de ${defender.name} pierde -${lostLimbDef} DEF pasiva (Def. actual restante: ${newComp.total}).`
+              );
+            }
 
             this.emitEvent('ACTION_RESOLVED', {
               actionType: 'SPECIAL_ATTACK',
@@ -2345,8 +2389,13 @@
           }
 
           if (destroyedGuard) {
+            const lostLimbDef = Math.max(1, Math.round(guardEff.def * 0.12));
+            const newComp = PartMechanics.getTorsoCompositePassiveDef(defender);
             this.logEvent('destroy',
               `💥 ¡Pieza destruida! ${guardPart.name} (${SLOT_META[guardPart.slot].short}) de ${defender.name} quedó destruida tras bloquear el golpe.`
+            );
+            this.logEvent('system',
+              `⚠️ ¡Red de blindaje debilitada! El Torso de ${defender.name} pierde -${lostLimbDef} DEF pasiva (Def. actual restante: ${newComp.total}).`
             );
           }
 
@@ -2361,17 +2410,34 @@
             destroyed: destroyedGuard
           });
         } else {
-          const targetEff = PartMechanics.computeEffectiveStats(intendedTarget, defender.buffs);
-          const damage = Math.max(1, effectiveAtk - targetEff.passiveDef);
+          let damage;
+          let defExplanation;
+          if (validTargetSlot === 'torso') {
+            const torsoComp = PartMechanics.getTorsoCompositePassiveDef(defender);
+            damage = Math.max(1, effectiveAtk - torsoComp.total);
+            defExplanation = torsoComp.limbBonus > 0
+              ? `Def. Compuesta Torso ${torsoComp.total} (Base ${torsoComp.base} + ${torsoComp.limbBonus} Red)`
+              : `Def. Torso ${torsoComp.total} (Sin red de blindaje)`;
+          } else {
+            const targetEff = PartMechanics.computeEffectiveStats(intendedTarget, defender.buffs);
+            damage = Math.max(1, effectiveAtk - targetEff.passiveDef);
+            defExplanation = `Defensa Pasiva ${targetEff.passiveDef}`;
+          }
+
           const destroyedTarget = this.applyDamageToPart(defender, intendedTarget, damage);
 
           this.logEvent('attack',
-            `🎯 ¡Impacto directo! ${attacker.name} disparó con ${part.name} contra ${intendedTarget.name} (${SLOT_META[validTargetSlot].short}) infligiendo ${damage} daño [Ataque ${effectiveAtk} - Defensa Pasiva ${targetEff.passiveDef}].${comboTag}${masteryTag}`
+            `🎯 ¡Impacto directo! ${attacker.name} disparó con ${part.name} contra ${intendedTarget.name} (${SLOT_META[validTargetSlot].short}) infligiendo ${damage} daño [Ataque ${effectiveAtk} - ${defExplanation}].${comboTag}${masteryTag}`
           );
 
-          if (destroyedTarget) {
+          if (destroyedTarget && validTargetSlot !== 'torso') {
+            const lostLimbDef = Math.max(1, Math.round(PartMechanics.computeEffectiveStats(intendedTarget, defender.buffs).def * 0.12));
+            const newComp = PartMechanics.getTorsoCompositePassiveDef(defender);
             this.logEvent('destroy',
               `💥 ¡Pieza destruida! ${intendedTarget.name} (${SLOT_META[validTargetSlot].short}) de ${defender.name} ha quedado fuera de combate.`
+            );
+            this.logEvent('system',
+              `⚠️ ¡Red de blindaje debilitada! El Torso de ${defender.name} pierde -${lostLimbDef} DEF pasiva (Def. actual restante: ${newComp.total}).`
             );
           }
 
@@ -2500,15 +2566,45 @@
             .filter(p => p && !p.isDestroyed);
 
           let targetSlot = 'torso';
-          const roll = Math.random();
-          if (roll < 0.48) {
+          const playerTorso = player.parts.torso;
+          const playerTorsoEff = PartMechanics.computeEffectiveStats(playerTorso, player.buffs);
+          const torsoRatio = playerTorso.currentHp / playerTorsoEff.maxHp;
+          const playerTorsoComp = PartMechanics.getTorsoCompositePassiveDef(player);
+
+          // Si el Torso del jugador está crítico o rematable, la IA va directamente a por la victoria
+          if (torsoRatio < 0.28 || playerTorso.currentHp <= Math.round(chosenAttack.atk * 1.05)) {
             targetSlot = 'torso';
-          } else if (roll < 0.82) {
-            const damaged = [...playerAliveParts].sort((a, b) => (a.currentHp / a.maxHp) - (b.currentHp / b.maxHp));
-            targetSlot = damaged[0] ? damaged[0].slot : 'torso';
           } else {
-            const randPart = PartGenerator.randomItem(playerAliveParts);
-            targetSlot = randPart ? randPart.slot : 'torso';
+            const outerAlive = playerAliveParts.filter(p => p.slot !== 'torso');
+
+            if (outerAlive.length > 0 && playerTorsoComp.limbBonus >= 3) {
+              // El Torso está fuertemente protegido por la Red de Blindaje: es prioritario romper extremidades
+              const heavilyDamaged = outerAlive.find(p => (p.currentHp / p.maxHp) <= 0.45);
+              const weaponArms = outerAlive.filter(p => (p.slot === 'leftArm' || p.slot === 'rightArm') && p.actionType === 'ATTACK');
+              const legs = outerAlive.filter(p => p.slot === 'leftLeg' || p.slot === 'rightLeg');
+
+              const roll = Math.random();
+              if (heavilyDamaged && roll < 0.50) {
+                targetSlot = heavilyDamaged.slot;
+              } else if (weaponArms.length > 0 && roll < 0.75) {
+                targetSlot = PartGenerator.randomItem(weaponArms).slot;
+              } else if (legs.length > 0 && roll < 0.88) {
+                targetSlot = PartGenerator.randomItem(legs).slot;
+              } else if (roll < 0.95) {
+                targetSlot = PartGenerator.randomItem(outerAlive).slot;
+              } else {
+                targetSlot = 'torso';
+              }
+            } else {
+              // La red de blindaje ya está diezmada o rota: el Torso vuelve a ser vulnerable
+              const roll = Math.random();
+              if (roll < 0.65) {
+                targetSlot = 'torso';
+              } else {
+                const randPart = PartGenerator.randomItem(playerAliveParts);
+                targetSlot = randPart ? randPart.slot : 'torso';
+              }
+            }
           }
 
           return {
@@ -2938,9 +3034,15 @@
             </g>
           `;
 
+          let passiveStr = `Pasiva: ${eff.passiveDef}`;
+          if (slot === 'torso') {
+            const comp = PartMechanics.getTorsoCompositePassiveDef({ parts });
+            passiveStr = `Pasiva Compuesta: ${comp.total} (Base ${comp.base} + ${comp.limbBonus} Red)`;
+          }
+
           return `
             <g class="${classes}" data-slot="${slot}" data-actor="${actor}" ${clickAttr}>
-              <title>${SLOT_META[slot].label}: ${part.name} | Vida: ${part.currentHp}/${eff.maxHp} | Ataque: ${eff.atk} | Defensa: ${eff.def} (Pasiva: ${eff.passiveDef}) | Velocidad: ${eff.spd} | Coste: ${part.apCost} PA | Confort: ${part.comfort}%</title>
+              <title>${SLOT_META[slot].label}: ${part.name} | Vida: ${part.currentHp}/${eff.maxHp} | Ataque: ${eff.atk} | Defensa: ${eff.def} (${passiveStr}) | Velocidad: ${eff.spd} | Coste: ${part.apCost} PA | Confort: ${part.comfort}%</title>
               ${geometrySVG}
               ${destroyedOverlay}
               ${miniHudSVG}
@@ -3253,11 +3355,12 @@
           totalSpd += eff.spd;
         }
 
+        const playerTorsoComp = PartMechanics.getTorsoCompositePassiveDef({ parts: data.equipped });
         document.getElementById('lobby-player-stats-box').innerHTML = `
           <div>Chasis: <strong style="color:#ffffff">${data.chassisName}</strong></div>
           <div>💠 Vida Torso: <strong style="color:var(--cyan)">${PartMechanics.computeEffectiveStats(data.equipped.torso).maxHp} HP</strong></div>
-          <div>❤️ Vida Total: <strong>${totalHp} HP</strong> • ⚔️ Ataque: <strong>${totalAtk}</strong></div>
-          <div>🛡️ Defensa: <strong>${totalDef}</strong> • ⚡ Velocidad: <strong style="color:var(--amber)">${totalSpd} SPD</strong></div>
+          <div>🛡️ Blindaje Torso: <strong style="color:var(--cyan)">${playerTorsoComp.total} DEF</strong> <small style="color:var(--text-muted);">(Base ${playerTorsoComp.base} + ${playerTorsoComp.limbBonus} Red)</small></div>
+          <div>❤️ Vida Total: <strong>${totalHp} HP</strong> • ⚔️ Ataque: <strong>${totalAtk}</strong> • ⚡ Vel: <strong style="color:var(--amber)">${totalSpd} SPD</strong></div>
         `;
 
         // 2. Centro: Datos del Enfrentamiento
@@ -3284,11 +3387,12 @@
           enemySpd += eff.spd;
         }
 
+        const enemyTorsoComp = PartMechanics.getTorsoCompositePassiveDef({ parts: enemy.parts });
         document.getElementById('lobby-enemy-stats-box').innerHTML = `
           <div style="font-weight:700; color:${isBoss ? 'var(--red)' : '#ffffff'};">${enemy.name}</div>
           <div>💠 Torso Enemigo: <strong style="color:var(--red)">${PartMechanics.computeEffectiveStats(enemy.parts.torso).maxHp} HP</strong></div>
-          <div>❤️ Vida Estimada: <strong>${enemyHp} HP</strong> • ⚔️ Ataque: <strong>${enemyAtk}</strong></div>
-          <div>⚡ Velocidad: <strong style="color:var(--amber)">${enemySpd} SPD</strong> • Nivel: <strong>Tier ${enemy.floor}</strong></div>
+          <div>🛡️ Blindaje Torso: <strong style="color:var(--red)">${enemyTorsoComp.total} DEF</strong> <small style="color:var(--text-muted);">(Base ${enemyTorsoComp.base} + ${enemyTorsoComp.limbBonus} Red)</small></div>
+          <div>❤️ Vida Estimada: <strong>${enemyHp} HP</strong> • ⚔️ Ataque: <strong>${enemyAtk}</strong> • ⚡ Vel: <strong style="color:var(--amber)">${enemySpd} SPD</strong></div>
         `;
       }
 
@@ -3452,7 +3556,8 @@
         const torsoEff = PartMechanics.computeEffectiveStats(torso, combatant.buffs);
         const torsoPct = Math.max(0, Math.min(100, Math.round((torso.currentHp / torsoEff.maxHp) * 100)));
 
-        document.getElementById(`${prefix}-torso-hp-text`).textContent = `${torso.currentHp} / ${torsoEff.maxHp} HP (${torsoPct}%)`;
+        const comp = PartMechanics.getTorsoCompositePassiveDef(combatant);
+        document.getElementById(`${prefix}-torso-hp-text`).textContent = `${torso.currentHp} / ${torsoEff.maxHp} HP (${torsoPct}%) • Blindaje: ${comp.total} DEF`;
         const torsoBar = document.getElementById(`${prefix}-torso-hp-bar`);
         torsoBar.style.width = `${torsoPct}%`;
         torsoBar.classList.toggle('low', torsoPct <= 35);
@@ -3502,12 +3607,32 @@
             ? `<span style="background:#00f0ff; color:#061220; font-size:0.75rem; font-weight:800; padding:2px 6px; border-radius:4px;">🛡️ Guardia x${part.guardCharges}</span>`
             : '';
 
+          const networkBadge = (slot === 'torso' && !isDestroyed)
+            ? `<span style="background:rgba(0, 240, 255, 0.15); border:1px solid var(--cyan); color:var(--cyan); font-size:0.7rem; font-weight:700; padding:1px 5px; border-radius:3px;">🛡️ Red Activa</span>`
+            : '';
+
+          let passiveDefRow;
+          if (slot === 'torso') {
+            const comp = PartMechanics.getTorsoCompositePassiveDef(combatant);
+            passiveDefRow = `
+              <span>Def. Compuesta: <strong style="color:var(--cyan);">${comp.total}</strong> <small style="color:var(--text-muted);">(+${comp.limbBonus} red)</small></span>
+              <span style="color:var(--green)">Confort: ${part.comfort}%</span>
+            `;
+          } else {
+            const armorContrib = Math.max(1, Math.round(eff.def * 0.12));
+            passiveDefRow = `
+              <span>Def. Pasiva: ${eff.passiveDef} <small style="color:var(--cyan);" title="Aporte a la red del torso">(+${armorContrib} red)</small></span>
+              <span style="color:var(--green)">Confort: ${part.comfort}%</span>
+            `;
+          }
+
           card.innerHTML = `
             <div class="part-card-top">
               <div style="display:flex; align-items:center; gap:5px;">
                 <span class="slot-tag">${SLOT_META[slot].icon} ${SLOT_META[slot].short}</span>
                 <span class="badge-action ${part.actionType}">${part.actionType === 'ATTACK' ? 'Ataque' : (part.actionType === 'GUARD' ? 'Guardia' : 'Especial')}</span>
                 ${guardBadge}
+                ${networkBadge}
               </div>
               <span class="ap-badge">${part.apCost} PA</span>
             </div>
@@ -3520,8 +3645,7 @@
               <div class="mini-hp-fill" style="width:${hpPct}%; background:${hpPct > 50 ? 'var(--green)' : (hpPct > 25 ? 'var(--amber)' : 'var(--red)')};"></div>
             </div>
             <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted);">
-              <span>Def. Pasiva: ${eff.passiveDef}</span>
-              <span style="color:var(--green)">Confort: ${part.comfort}%</span>
+              ${passiveDefRow}
             </div>
           `;
           container.appendChild(card);
@@ -3764,6 +3888,29 @@
         const comfortBonusPct = ((eff.comfortMultiplier - 1) * 100).toFixed(1);
         const box = document.getElementById('combat-part-inspector');
 
+        let defPasivaHtml = `<div>Defensa Pasiva: <strong>${eff.passiveDef}</strong></div>`;
+        let compositeNetworkHtml = '';
+        if (slot === 'torso') {
+          const comp = PartMechanics.getTorsoCompositePassiveDef(combatant);
+          defPasivaHtml = `<div>Defensa Compuesta: <strong style="color:var(--cyan);">${comp.total}</strong> <small style="color:var(--text-muted);">(Base ${comp.base} + ${comp.limbBonus} Red)</small></div>`;
+          const activeContributors = comp.contributors.length > 0
+            ? comp.contributors.map(c => `${SLOT_META[c.slot].icon} ${c.name} (+${c.bonus})`).join(', ')
+            : 'Ninguna (extremidades caídas)';
+          compositeNetworkHtml = `
+            <div style="margin-top:8px; padding:7px 10px; background:rgba(0,240,255,0.08); border-left:3px solid var(--cyan); border-radius:4px; font-size:0.78rem;">
+              <strong style="color:var(--cyan);">🛡️ Red de Blindaje Compuesto:</strong> El Torso absorbe el +12% de la defensa de cada extremidad activa mientras no sea destruida (+${comp.limbBonus} DEF activa).
+              <div style="color:var(--text-muted); margin-top:3px;">Aportes activos a la red: ${activeContributors}</div>
+            </div>
+          `;
+        } else {
+          const contrib = Math.max(1, Math.round(eff.def * 0.12));
+          compositeNetworkHtml = `
+            <div style="margin-top:6px; padding:5px 8px; background:rgba(0,240,255,0.05); border-radius:4px; font-size:0.75rem; color:var(--text-muted);">
+              🛡️ Mientras esté intacta, esta pieza aporta <strong style="color:var(--cyan);">+${contrib} DEF</strong> a la Red de Blindaje Compuesto del Torso.
+            </div>
+          `;
+        }
+
         box.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <strong style="color:${actorKey === 'player' ? 'var(--cyan)' : 'var(--red)'}; font-size:0.95rem;">
@@ -3776,7 +3923,7 @@
             <div>Ataque: <strong style="color:var(--red)">${eff.atk}</strong></div>
             <div>Velocidad: <strong style="color:var(--amber)">+${eff.spd} SPD</strong></div>
             <div>Defensa Guardia: <strong style="color:var(--cyan)">${eff.def}</strong></div>
-            <div>Defensa Pasiva: <strong>${eff.passiveDef}</strong></div>
+            ${defPasivaHtml}
             <div>Coste: <strong style="color:var(--amber)">${part.apCost} PA</strong></div>
           </div>
           <div style="font-size:0.82rem; line-height:1.45;">
@@ -3787,6 +3934,7 @@
             <div style="color:${eff.unlocked100 ? 'var(--purple)' : 'var(--text-muted)'}; margin-top:2px;">
               ${eff.unlocked100 ? '★ [Activo]' : '🔒 [Desbloquea al 100%]'} ${PartMechanics.getMastery100Description(part)}
             </div>
+            ${compositeNetworkHtml}
           </div>
         `;
       }
@@ -3939,17 +4087,18 @@
         }
 
         const torsoEff = PartMechanics.computeEffectiveStats(data.equipped.torso);
+        const torsoComp = PartMechanics.getTorsoCompositePassiveDef({ parts: data.equipped });
         document.getElementById('garage-total-stats').innerHTML = `
           <div style="background:rgba(0,0,0,0.35); padding:12px; border-radius:8px; border:1px solid var(--border-dim); display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.86rem;">
             <div>💠 Vida Torso (Vital): <strong style="color:var(--cyan)">${torsoEff.maxHp} HP</strong></div>
+            <div>🛡️ Blindaje Torso: <strong style="color:var(--cyan)">${torsoComp.total} DEF</strong> <small style="color:var(--text-muted);">(Base ${torsoComp.base} + ${torsoComp.limbBonus} Red)</small></div>
             <div>❤️ Vida Total (6 piezas): <strong style="color:var(--green)">${totalHp} HP</strong></div>
             <div>⚔️ Ataque Total: <strong style="color:var(--red)">${totalAtk} ATK</strong></div>
-            <div>🛡️ Defensa de Guardia: <strong style="color:var(--cyan)">${totalDef} DEF</strong></div>
             <div>⚡ Velocidad Total: <strong style="color:var(--amber)">${totalSpd} SPD</strong></div>
             <div>🔗 Confort Promedio: <strong style="color:var(--green)">${Math.round(totalComfort / 6)}%</strong></div>
           </div>
           <div style="font-size:0.84rem; color:var(--text-muted); line-height:1.5;">
-            💡 <strong>Consejo:</strong> En el selector superior puedes bajar de piso para entrenar piezas nuevas con Confort al 0% sin riesgo, o volver al piso más alto para progresar en la Torre.
+            💡 <strong>Estrategia de Blindaje:</strong> El Torso absorbe el +12% de la defensa de tus 5 extremidades intactas (+${torsoComp.limbBonus} DEF activa). Mantener tus brazos y piernas funcionales protege tu núcleo vital.
           </div>
         `;
 
@@ -3960,6 +4109,14 @@
           const p = data.equipped[slot];
           const eff = PartMechanics.computeEffectiveStats(p);
           const bonusPct = ((eff.comfortMultiplier - 1) * 100).toFixed(1);
+
+          let defSpan = `<span>Defensa: <strong style="color:var(--cyan)">${eff.def}</strong> <small>(Pasiva: ${eff.passiveDef})</small></span>`;
+          if (slot === 'torso') {
+            defSpan = `<span>Defensa: <strong style="color:var(--cyan)">${eff.def}</strong> <small title="Base ${torsoComp.base} + ${torsoComp.limbBonus} Red">(Pasiva Red: ${torsoComp.total})</small></span>`;
+          } else {
+            const contrib = Math.max(1, Math.round(eff.def * 0.12));
+            defSpan = `<span>Defensa: <strong style="color:var(--cyan)">${eff.def}</strong> <small title="Aporte a la red del torso">(Pasiva: ${eff.passiveDef} | +${contrib} Red)</small></span>`;
+          }
 
           const card = document.createElement('div');
           card.className = `equipped-slot-card ${this.garageSlotFilter === slot ? 'active-filter' : ''}`;
@@ -3982,7 +4139,7 @@
             <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-muted);">
               <span>Vida: <strong style="color:#ffffff">${eff.maxHp}</strong> <small>(${p.maxHp})</small></span>
               <span>Ataque: <strong style="color:var(--red)">${eff.atk}</strong></span>
-              <span>Defensa: <strong style="color:var(--cyan)">${eff.def}</strong> <small>(Pasiva: ${eff.passiveDef})</small></span>
+              ${defSpan}
               <span>Velocidad: <strong style="color:var(--amber)">+${eff.spd}</strong></span>
             </div>
             <div class="comfort-bar-wrap">
